@@ -44,5 +44,5 @@ node -v
 ```
 You should see something like: 
 ```
-v8.6.0
+v8.6.0  
 ```
