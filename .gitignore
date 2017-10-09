@@ -38,8 +38,9 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-/bin/
-/.gradle/
+list_backend/bin/
+list_backend/.gradle/
+.gradle/
 
 ### IntelliJ IDEA ###
 .idea
