@@ -1,0 +1,32 @@
+{
+  "name": "LisT-Gateway",
+  "version": "0.0.1",
+  "description": "LisT Gateway",
+  "main": "xxxx",
+  "scripts": {},
+  "authors": "Julian Seibert",
+  "license": "MIT",
+  "dependencies": {
+    "mqtt": "^2.13.0",
+    "coap": "^0.21.0"
+  },
+  "directories": {
+  },
+  "optionalDependencies": {
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smartuni/LisT"
+  },
+  "keywords": [
+    "IoT",
+    "nodejs",
+    "COAP",
+    "MQTT",
+    "Raspberry Pi"
+  ],
+  "bin": {
+    "tin": "./path/to/program"
+  }
+}
