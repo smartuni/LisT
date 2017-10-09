@@ -1,4 +1,4 @@
-package com.list.list;
+package de.haw.list;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
