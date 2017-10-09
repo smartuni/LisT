@@ -28,7 +28,7 @@ To use our system, you'll need the following hardware:
 
 * 1x Raspberry Pie
 * 1x light sensor (desc tba)
-* 1x PH-sensor (desc tba)
+* 1x pH-sensor (desc tba)
 * 1x temperature sensor (desc tba)
 * 1x heating element (desc tba)
 * 1x light elements (desc tba)
