@@ -8,8 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "mqtt": "^2.13.0",
-    "coap": "^0.21.0",
-    "xbee-api":"^0.5.3"
+    "coap": "^0.21.0"
   },
   "directories": {
   },
