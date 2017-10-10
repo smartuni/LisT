@@ -1,0 +1,4 @@
+#Basti custom settings:
+firmware/coap/.kdev4/
+firmware/coap/bin/
+*.kdev4
