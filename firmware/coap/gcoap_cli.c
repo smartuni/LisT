@@ -15,6 +15,8 @@
  *
  * @author      Ken Bannister <kb2ma@runbox.com>
  *
+ * @user	Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
+ * 
  * @}
  */
 
