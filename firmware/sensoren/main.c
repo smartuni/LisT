@@ -14,12 +14,17 @@
  *
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>;
  *				Katrin Moritz <katrin.moritz@haw-hamburg.de>
+ *              Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
  *
  * @}
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "msg.h"
+#include "net/gcoap.h"
+#include "kernel_types.h"
 
 #include "shell.h"
 #include "xtimer.h"
@@ -31,12 +36,26 @@
 
 /* set interval to 60 seconds */
 #define INTERVAL (10U * US_PER_SEC)
+#define MAIN_QUEUE_SIZE (4)
+static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
+
+extern int gcoap_cli_cmd(int argc, char **argv);
+extern void gcoap_cli_init(void);
+
+/*static const shell_command_t shell_commands[] = {
+    { "coap", "CoAP example", gcoap_cli_cmd },
+    { NULL, NULL, NULL }
+};*/
 
 
 int main(void)
 {
 	phydat_t temp_read, light_read;
     int dim_temp, dim_light;
+    
+    /* for the thread running the shell */
+    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+    gcoap_cli_init();
 	
 	puts("Welcome to the RIOT-PO!\n");
 	
@@ -47,7 +66,12 @@ int main(void)
         DEBUG("[ERROR] Unable to find sensors\n");
         return 0;
 	}
-
+	
+    /* start shell */
+    /*puts("All up, running the shell now");
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+    */
     xtimer_ticks32_t last_wakeup = xtimer_now();
     xtimer_sleep(1);
     while(1){
