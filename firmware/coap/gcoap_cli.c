@@ -7,7 +7,6 @@
  */
 
 /**
- * @ingroup     examples
  * @{
  *
  * @file
@@ -15,6 +14,8 @@
  *
  * @author      Ken Bannister <kb2ma@runbox.com>
  *
+ * @user        Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
+ * 
  * @}
  */
 
@@ -25,6 +26,7 @@
 #include "net/gcoap.h"
 #include "od.h"
 #include "fmt.h"
+#include "phydat.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -32,11 +34,13 @@
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _data_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* CoAP resources */
 static const coap_resource_t _resources[] = {
     { "/cli/stats", COAP_GET | COAP_PUT, _stats_handler },
+    { "/data", COAP_GET, _data_handler},
     { "/riot/board", COAP_GET, _riot_board_handler },
 };
 
@@ -48,6 +52,9 @@ static gcoap_listener_t _listener = {
 
 /* Counts requests sent by CLI. */
 static uint16_t req_count = 0;
+
+//placeholder for data
+phydat_t data = { .val = {0}, .unit = 0, .scale = 0};
 
 /*
  * Response callback.
@@ -128,6 +135,26 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 
     return 0;
 }
+
+static ssize_t _data_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            /* write the response buffer with the requested data */
+            //NOTE: signed value for data
+            size_t payload_len = fmt_s16_dec((char *)pdu->payload, data.val[0]);
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+
+    }
+
+    return 0;
+}
+
 
 static ssize_t _riot_board_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len)
 {
