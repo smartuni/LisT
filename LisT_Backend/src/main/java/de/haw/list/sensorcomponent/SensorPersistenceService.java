@@ -3,8 +3,11 @@
  */
 package de.haw.list.sensorcomponent;
 
+import java.time.LocalDateTime;
+
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
+import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 
 /**
  * Persistiert Sensoren und Sensordaten.
@@ -27,7 +30,8 @@ public interface SensorPersistenceService {
 	 * @param sensorId ID des Sensors
 	 * @param value Wert des Sensors
 	 * @return Sensorwert
+	 * @throws SensorNotFoundException 
 	 */
-	public SensorValue addSensorValue(int sensorId, float value);
+	public SensorValue addSensorValue(int sensorId, double value, LocalDateTime timestamp) throws SensorNotFoundException;
 
 }		

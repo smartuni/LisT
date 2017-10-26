@@ -5,16 +5,11 @@ package de.haw.list.sensorcomponent.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import de.haw.list.sensorcomponent.util.LocalDateTimeDeserializer;
-import de.haw.list.sensorcomponent.util.LocalDateTimeSerializer;
 
 /**
  * Modell fuer Sensorwert.
@@ -33,13 +28,19 @@ public class SensorValue {
 //	@JoinColumn(name = "sensor_id")
 	private Sensor sensor;
 	
-	private double wert;
+	private double value;
 	
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+//	@JsonSerialize(using = LocalDateTimeSerializer.class)
+//	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @Column(name = "`timestamp`")
 	private LocalDateTime timestamp;
 	
-	public SensorValue() {};
+	public SensorValue(Sensor sensor, double value, LocalDateTime timestamp) {
+		this.sensor = sensor;
+		this.value = value;
+		this.timestamp = timestamp;
+	}
+	
 	
 	
 

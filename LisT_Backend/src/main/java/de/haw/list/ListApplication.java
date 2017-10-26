@@ -1,5 +1,7 @@
 package de.haw.list;
 
+import java.time.LocalDateTime;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
 import de.haw.list.sensorcomponent.model.Sensor;
+import de.haw.list.sensorcomponent.model.SensorValue;
 import de.haw.list.sensorcomponent.repo.SensorRepository;
 import de.haw.list.sensorcomponent.repo.SensorValueRepository;
 import de.haw.list.sensorcomponent.util.LocationType;
@@ -44,6 +47,13 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		Sensor sensor2 = new Sensor("s2", SensorType.TEMPERATURE, "TemperatureSensor2", LocationType.INSIDE, 20, 15);
 		
 		sensorRepo.save(sensor2);
+		
+		SensorValue sv1 = new SensorValue(sensor1, 10, LocalDateTime.now());
+		
+		SensorValue sv2 = new SensorValue(sensor2, 12, LocalDateTime.now());
+		
+		sensorValueRepo.save(sv1);
+		sensorValueRepo.save(sv2);
 	}
 	
 	@Override
