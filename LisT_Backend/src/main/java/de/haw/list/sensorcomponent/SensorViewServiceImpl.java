@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
@@ -17,6 +18,7 @@ import de.haw.list.sensorcomponent.util.SensorNotFoundException;
  * 
  * @author Lydia Pflug 25.10.2017
  */
+@Component
 public class SensorViewServiceImpl implements SensorViewService {
 
 	private SensorRepository sensorRepo;

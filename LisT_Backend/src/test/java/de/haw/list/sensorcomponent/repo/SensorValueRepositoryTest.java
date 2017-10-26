@@ -66,7 +66,7 @@ public final class SensorValueRepositoryTest {
 		
 	}
 	
-	@Test
+//	@Test
 	public void testFindLatestValueBySensor() {
 		
 	}
