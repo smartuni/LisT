@@ -27,7 +27,7 @@ import de.haw.list.sensorcomponent.util.SensorType;
 @Transactional
 @ContextConfiguration(classes = ListApplication.class)
 @ActiveProfiles("test")
-public final class SensorValueRepositoryTest {
+public class SensorValueRepositoryTest {
 
 	private Sensor sensor1;
 	
@@ -44,7 +44,7 @@ public final class SensorValueRepositoryTest {
 	private SensorRepository sensorRepo;
 	
 	@Before
-	private void setUp() {
+	public void setUp() {
 		
 		sensorValueRepo.deleteAll();
 		sensorRepo.deleteAll();
@@ -66,7 +66,7 @@ public final class SensorValueRepositoryTest {
 		
 	}
 	
-//	@Test
+	@Test
 	public void testFindLatestValueBySensor() {
 		
 	}
