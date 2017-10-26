@@ -72,10 +72,10 @@ int main(void)
 	}
 
     /* start shell */
-    puts("All up, running the shell now");
+   /* puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-    
+    */
     xtimer_ticks32_t last_wakeup = xtimer_now();
     xtimer_sleep(1);
     while(1){
