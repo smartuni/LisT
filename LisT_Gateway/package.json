@@ -1,14 +1,14 @@
 {
   "name": "list-gateway",
-  "version": "0.0.3",
+  "version": "0.0.9",
   "description": "LisT Gateway",
   "main": "",
   "scripts": {},
   "authors": "Julian Seibert",
   "license": "MIT",
   "dependencies": {
-    "mqtt": "^2.13.0",
-    "nodecoap": "^0.0.2"
+    "coap": "0.21.0",
+    "mqtt": "2.13.1"
   },
   "directories": {},
   "optionalDependencies": {},
