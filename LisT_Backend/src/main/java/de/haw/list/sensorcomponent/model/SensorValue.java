@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * Modell fuer Sensorwert.
@@ -18,20 +20,21 @@ import javax.persistence.ManyToOne;
  * 19.10.2017
  */
 @Entity
+@Table(name = "sensorvalue")
 public class SensorValue {
 	
 	@Id
 	@GeneratedValue
 	private int id;
 	
+	//@OneToMany
 	@ManyToOne
+//	@Column(name = "sensorid")
 //	@JoinColumn(name = "sensor_id")
 	private Sensor sensor;
 	
 	private double value;
 	
-//	@JsonSerialize(using = LocalDateTimeSerializer.class)
-//	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Column(name = "`timestamp`")
 	private LocalDateTime timestamp;
 	
@@ -39,6 +42,10 @@ public class SensorValue {
 		this.sensor = sensor;
 		this.value = value;
 		this.timestamp = timestamp;
+	}
+
+	public int getId() {
+		return id;
 	}
 	
 	

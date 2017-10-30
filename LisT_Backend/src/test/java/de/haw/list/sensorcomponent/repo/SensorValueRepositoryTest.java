@@ -1,6 +1,9 @@
 package de.haw.list.sensorcomponent.repo;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,8 +69,14 @@ public class SensorValueRepositoryTest {
 		
 	}
 	
-	@Test
+//	@Test
 	public void testFindLatestValueBySensor() {
+//		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
+//		assertEquals(sv1.getId(), result.getId());
+//		
+		List<SensorValue> result2 = sensorValueRepo.findValueBySensor(sensor1);
+		assertEquals(2, result2.size());
+		System.out.println("################ Test ################");
 		
 	}
 	

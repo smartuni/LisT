@@ -40,9 +40,9 @@ public class Sensor {
 	
 	private float min;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	//	@JoinColumn(name = "person_id")
-	private List<SensorValue> sensorValues;
+//	@OneToMany(fetch = FetchType.EAGER)
+//	//	@JoinColumn(name = "person_id")
+//	private List<SensorValue> sensorValues;
 
 	public Sensor() {}
 
@@ -53,7 +53,11 @@ public class Sensor {
 		this.location = location;
 		this.max = max;
 		this.min = min;
-		this.sensorValues = new ArrayList<>();
+//		this.sensorValues = new ArrayList<>();
+	}
+
+	public int getId() {
+		return id;
 	}
 	
 	
