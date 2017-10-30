@@ -27,7 +27,7 @@ public interface SensorValueRepository extends JpaRepository<SensorValue, Intege
 	@Query(value = "select * from sensorvalue where sensorvalue.sensor_id = :id and sensorvalue.timestamp = (Select max(sensorvalue.timestamp) from sensorvalue)", nativeQuery = true)
 	Optional<SensorValue> findLatestValueBySensor(@Param("id") int sensorId);
 	
-	@Query(value = "select * from sensorvalue where sensor = :sensor)", nativeQuery = true)
-	List<SensorValue> findValueBySensor(@Param("sensor") Sensor sensor);
+	@Query(value = "select * from sensor_value)", nativeQuery = true)
+	List<SensorValue> findValueBySensor();
 
 }

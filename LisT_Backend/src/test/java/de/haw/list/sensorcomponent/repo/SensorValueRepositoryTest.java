@@ -69,14 +69,14 @@ public class SensorValueRepositoryTest {
 		
 	}
 	
-//	@Test
+	@Test
 	public void testFindLatestValueBySensor() {
 //		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
 //		assertEquals(sv1.getId(), result.getId());
 //		
-		List<SensorValue> result2 = sensorValueRepo.findValueBySensor(sensor1);
-		assertEquals(2, result2.size());
-		System.out.println("################ Test ################");
+//		List<SensorValue> result2 = sensorValueRepo.findValueBySensor();
+//		assertEquals(2, result2.size());
+//		System.out.println("################ Test ################");
 		
 	}
 	
