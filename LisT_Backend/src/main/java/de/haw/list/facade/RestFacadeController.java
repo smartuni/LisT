@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.SensorViewService;
@@ -25,7 +25,7 @@ import de.haw.list.sensorcomponent.util.SensorNotFoundException;
  * @author Lydia Pflug
  * 09.10.2017
  */
-@Controller
+@RestController
 public class RestFacadeController {
 	
 //	@Autowired
@@ -80,7 +80,7 @@ public class RestFacadeController {
 	 * @throws SensorNotFoundException 
 	 */
 	@RequestMapping(value = "/api/sensors/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> getSensor(@PathVariable("id") int sensorId) throws SensorNotFoundException {
+	public ResponseEntity<?> getSensor(@PathVariable("id") Integer sensorId) throws SensorNotFoundException {
 		try {
 			return new ResponseEntity<Sensor>(sensorViewService.getSensor(sensorId), HttpStatus.OK);
 		} catch (SensorNotFoundException e) {
@@ -109,10 +109,11 @@ public class RestFacadeController {
 	 * @throws SensorNotFoundException 
 	 */
 	@RequestMapping(value="/api/sensors/{id}/values/latest", method= RequestMethod.GET)
-	public ResponseEntity<?> getLastValueFromSensor(@PathVariable("id") int sensorId) throws SensorNotFoundException, NoValueAvailableException {
+	public ResponseEntity<?> getLastValueFromSensor(@PathVariable("id") Integer sensorId) throws SensorNotFoundException, NoValueAvailableException {
 		try {
 //			return new ResponseEntity<SensorValue>(sensorViewService.getLastValueFromSensor(sensorId), HttpStatus.OK);
-			return new ResponseEntity<SensorValue>(new SensorValue(new Sensor(), 10.0, LocalDateTime.now()), HttpStatus.OK);
+//			return new ResponseEntity<SensorValue>(new SensorValue(new Sensor(), 10.0, LocalDateTime.now()), HttpStatus.OK);
+			return new ResponseEntity<Double>(10.0, HttpStatus.OK);
 //		} catch (SensorNotFoundException e) {
 //			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //		} catch (NoValueAvailableException e) {
@@ -129,7 +130,7 @@ public class RestFacadeController {
 	 * @throws SensorNotFoundException 
 	 */
 	@RequestMapping(value="/api/sensors/{id}/values",method=RequestMethod.GET)
-	public ResponseEntity<?> getValuesFromSensor(@PathVariable("id") int sensorId) throws SensorNotFoundException {
+	public ResponseEntity<?> getValuesFromSensor(@PathVariable("id") Integer sensorId) throws SensorNotFoundException {
 		try {
 			return new ResponseEntity<List<SensorValue>>(sensorViewService.getValuesFromSensor(sensorId), HttpStatus.OK);
 		} catch (SensorNotFoundException e) {
