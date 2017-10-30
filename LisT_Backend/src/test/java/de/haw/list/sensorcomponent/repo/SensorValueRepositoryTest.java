@@ -1,6 +1,9 @@
 package de.haw.list.sensorcomponent.repo;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +30,7 @@ import de.haw.list.sensorcomponent.util.SensorType;
 @Transactional
 @ContextConfiguration(classes = ListApplication.class)
 @ActiveProfiles("test")
-public final class SensorValueRepositoryTest {
+public class SensorValueRepositoryTest {
 
 	private Sensor sensor1;
 	
@@ -44,7 +47,7 @@ public final class SensorValueRepositoryTest {
 	private SensorRepository sensorRepo;
 	
 	@Before
-	private void setUp() {
+	public void setUp() {
 		
 		sensorValueRepo.deleteAll();
 		sensorRepo.deleteAll();
@@ -68,6 +71,12 @@ public final class SensorValueRepositoryTest {
 	
 //	@Test
 	public void testFindLatestValueBySensor() {
+//		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
+//		assertEquals(sv1.getId(), result.getId());
+//		
+		List<SensorValue> result2 = sensorValueRepo.findValueBySensor(sensor1);
+		assertEquals(2, result2.size());
+		System.out.println("################ Test ################");
 		
 	}
 	
