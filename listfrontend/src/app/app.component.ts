@@ -5,7 +5,6 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'bm-list',
-  providers: [SensorService],
   template: `
   <h1>{{title}}</h1>
   <h2>{{title2}}</h2>,

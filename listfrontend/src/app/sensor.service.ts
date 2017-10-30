@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class SensorService {
-  public baseUrl = 'http://141.22.28.86:3306/';
+  public baseUrl = 'localhost:4200';
 
   constructor(private http: Http) { }
 
