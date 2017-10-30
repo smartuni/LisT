@@ -28,8 +28,6 @@
 
 #include "shell.h"
 #include "xtimer.h"
-#include "tmp006.h"
-#include "tmp006_params.h"
 #include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
