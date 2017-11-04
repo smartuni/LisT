@@ -1,0 +1,5 @@
+ping6 ff02::1 //scan for devices
+
+To change default lowpan channel on pi edit /etc/default/lowpan
+
+to change default lowpan channel in RIOT see: RIOT/sys/shell/commands/sc_netif.c
