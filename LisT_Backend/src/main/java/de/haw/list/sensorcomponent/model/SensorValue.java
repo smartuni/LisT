@@ -40,7 +40,6 @@ public class SensorValue {
 	
 	private double value;
 	
-    @Column(name = "`timestamp`")
 	private LocalDateTime timestamp;
 	
 	public SensorValue(Sensor sensor, double value, LocalDateTime timestamp) {
@@ -52,6 +51,32 @@ public class SensorValue {
 	public int getId() {
 		return id;
 	}
+
+	/**
+	 * Getter fuer sensor
+	 * @return the sensor
+	 */
+	public Sensor getSensor() {
+		return sensor;
+	}
+
+	/**
+	 * Getter fuer value
+	 * @return the value
+	 */
+	public double getValue() {
+		return value;
+	}
+
+	/**
+	 * Getter fuer timestamp
+	 * @return the timestamp
+	 */
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
+	
+	
 	
 	
 	

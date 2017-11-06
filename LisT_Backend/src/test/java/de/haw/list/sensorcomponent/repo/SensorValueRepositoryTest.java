@@ -2,6 +2,7 @@ package de.haw.list.sensorcomponent.repo;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class SensorValueRepositoryTest {
 	
 	private SensorValue sv2;
 	
+	private LocalDateTime ld;
+	
 	@Autowired
 	private SensorValueRepository sensorValueRepo;
 	
@@ -60,9 +63,11 @@ public class SensorValueRepositoryTest {
 		
 		sensorRepo.save(sensor2);
 		
-		sv1 = new SensorValue(sensor1, 10, LocalDateTime.now());
+		ld = LocalDateTime.now();
 		
-		sv2 = new SensorValue(sensor1, 12, LocalDateTime.now().minusDays(1));
+		sv1 = new SensorValue(sensor1, 10, ld);
+		
+		sv2 = new SensorValue(sensor1, 12, ld.minusDays(1));
 		
 		sensorValueRepo.save(sv1);
 		sensorValueRepo.save(sv2);
@@ -73,10 +78,19 @@ public class SensorValueRepositoryTest {
 	public void testFindLatestValueBySensor() {
 //		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
 //		assertEquals(sv1.getId(), result.getId());
-//		
+		
 //		List<SensorValue> result2 = sensorValueRepo.findValueBySensor();
 //		assertEquals(2, result2.size());
 //		System.out.println("################ Test ################");
+//		
+//		List<SensorValue> result3 = sensorValueRepo.findValueBySensor(sensor1.getId());
+//		assertEquals(2, result3.size());
+//		System.out.println("################ Test ################");
+//		
+//		List<SensorValue> result4 = sensorValueRepo.findValueByTimestamp(ld);
+//		assertEquals(12, result4.size());
+//		System.out.println("################ Test ################");
+		
 		
 	}
 	

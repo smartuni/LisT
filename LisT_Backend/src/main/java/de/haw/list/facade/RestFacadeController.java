@@ -28,9 +28,6 @@ import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 @RestController
 public class RestFacadeController {
 	
-//	@Autowired
-//	private SensorComponentService sensorComponentService;
-	
 	@Autowired
 	private SensorPersistenceService sensorPersistenceService;
 	
