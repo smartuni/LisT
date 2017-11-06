@@ -12,9 +12,8 @@
  * @file
  * @brief       Example for demonstrating SAUL and the SAUL registry
  *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>;
- *				Katrin Moritz <katrin.moritz@haw-hamburg.de>
- *              Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
+ * @author      Katrin Moritz <katrin.moritz@haw-hamburg.de>
+ * @author      Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
  *
  * @}
  */
@@ -22,18 +21,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//  CoAP
 #include "msg.h"
 #include "net/gcoap.h"
 #include "kernel_types.h"
 
+// SAUL, drivers
 #include "shell.h"
-#include "xtimer.h"
 #include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
 
-#include "net/gnrc/sixlowpan.h"
+// Timer
+#include "xtimer.h"
+#include "timex.h"
 
+
+// Network
 #include "net/ipv6/addr.h"
 #include "net/gnrc/ipv6/netif.h"
 #include "net/gnrc/netif.h"
@@ -42,12 +46,21 @@
 #include "net/gnrc/pkt.h"
 #include "net/gnrc/pktbuf.h"
 #include "net/gnrc/netif/hdr.h"
+#include "net/gnrc/sixlowpan.h"
 #include "net/gnrc/sixlowpan/netif.h"
+
+// GPIO
+#include "periph/gpio.h"
+
+// RGB-LED
+#include "rgbled.h"
 
 #include "gcoap_cli.h"
 
+// PWM
+#include "periph/pwm.h" 
 
-/* set interval to 60 seconds */
+/* set interval to 10 seconds */
 #define INTERVAL (10U * US_PER_SEC)
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -55,8 +68,7 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
-/*
-static const shell_command_t shell_commands[] = {
+/*static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
 };
@@ -64,6 +76,7 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
+    // sensors
 	phydat_t temp_read, light_read;
     int dim_temp, dim_light;
     
@@ -72,6 +85,12 @@ int main(void)
     kernel_pid_t ifs[GNRC_NETIF_NUMOF];
     gnrc_netif_get(ifs);
     gnrc_netapi_set(ifs[0], NETOPT_CHANNEL, 0, &channel, sizeof(channel));
+
+    // RGB-LED actuator, initialise GPIO ports
+    gpio_init(GPIO_PIN(3, 6), GPIO_OUT); // red LED
+    //init_out(0, 4); // blue LED
+    //init_out(3, 4); // green LED
+
     
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
@@ -108,7 +127,7 @@ int main(void)
             puts("temp read error");
             continue;
         }
-        if(dim_light < 0){
+        if(dim_light < 0) {
             puts("light read error");
             continue;
         }
@@ -121,7 +140,10 @@ int main(void)
         phydat_dump(&temp_read, dim_temp);
         puts("RGB-Licht:");
         phydat_dump(&light_read, dim_light); 
-        */
+
+        //rgbled_init(rgbled_t *led, pwm_t pwm, int channel_r, int channel_g, int channel_b);
+        //rgbled_set(const rgbled_t *led, color_rgb_t *color);
+                 
     }
         	
     return 0;
