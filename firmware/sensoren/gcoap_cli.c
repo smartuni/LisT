@@ -170,9 +170,11 @@ static ssize_t _light_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
 
             /* write the response buffer with the requested data (light) */
             //NOTE: signed value for data
-            size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
+            
+            memcpy(pdu->payload, light.val, sizeof(light.val));
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+            return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
 
     }
 
