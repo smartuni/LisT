@@ -1,6 +1,6 @@
 {
   "name": "list-gateway",
-  "version": "0.0.9",
+  "version": "0.0.13",
   "description": "LisT Gateway",
   "main": "",
   "scripts": {},
@@ -8,7 +8,10 @@
   "license": "MIT",
   "dependencies": {
     "coap": "0.21.0",
-    "mqtt": "2.13.1"
+    "mqtt": "2.13.1",
+    "mosca": "2.6.0",
+    "coap-node": "0.2.5",
+    "q": "^1.5.1"
   },
   "directories": {},
   "optionalDependencies": {},
