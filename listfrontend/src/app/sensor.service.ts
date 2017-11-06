@@ -6,15 +6,18 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class SensorService {
-  public baseUrl = 'localhost:4200';
+  public baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: Http) { }
 
-  getSensors(): Observable<Sensors[]> {
-    const sensors$ = this.http
-      .get('${this.baseUrl}')
-      .map(response => response.json().map(toSensor));
-    return sensors$;
+  getSensors(): Promise<Sensors> {
+    return this.http.get(this.baseUrl)
+      .toPromise()
+      .then(response => response.json().data as Sensors);
+//    const sensors$ = this.http
+//      .get('${this.baseUrl}/sensors')
+//      .map(mapSensors);
+//    return sensors$;
   }
 
 }

@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
 
   makeRequest() {
     this.sensorSevice.getSensors().subscribe(
-      data => this.data = data['result'],
+      data => this.data = data[result],
       e => this.errorMessage = e,
       () => this.loading = false);
   }
