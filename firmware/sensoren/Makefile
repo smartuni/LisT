@@ -21,6 +21,9 @@ BOARD_INSUFFICIENT_MEMORY := chronos msb-430 msb-430h nucleo32-f031 nucleo32-f04
 #GCOAP_TOKENLEN = 2
 #CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
+FEATURES_REQUIRED = periph_gpio
+FEATURES_REQUIRED = periph_pwm
+
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
 USEMODULE += gnrc_netdev_default
