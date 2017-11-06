@@ -1,4 +1,7 @@
-ping6 ff02::1 //scan for devices
+on pi:
+ping6 -I lowpan0 ff02::1 //scan for devices
+on riot:
+ping6 ff02::1
 
 To change default lowpan channel on pi edit /etc/default/lowpan
 

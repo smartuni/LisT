@@ -44,6 +44,8 @@
 #include "net/gnrc/netif/hdr.h"
 #include "net/gnrc/sixlowpan/netif.h"
 
+#include "gcoap_cli.h"
+
 
 /* set interval to 60 seconds */
 #define INTERVAL (10U * US_PER_SEC)
@@ -53,11 +55,12 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
+/*
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
 };
-
+*/
 
 int main(void)
 {
@@ -78,27 +81,29 @@ int main(void)
 	
 	puts("Welcome to the RIOT-PO!\n");
 	
-	saul_reg_t *temp = saul_reg_find_name("tmp006");
-    saul_reg_t *light = saul_reg_find_type(SAUL_SENSE_COLOR);
+	saul_reg_t *temp_saul = saul_reg_find_name("tmp006");
+    saul_reg_t *light_saul = saul_reg_find_type(SAUL_SENSE_COLOR);
 
-	if (temp == NULL || light == NULL) {
+	if (temp_saul == NULL || light_saul == NULL) {
         DEBUG("[ERROR] Unable to find sensors\n");
         return 0;
 	}
 
     /* start shell */
+    /*
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-
+    */
+    
     xtimer_ticks32_t last_wakeup = xtimer_now();
     xtimer_sleep(1);
     while(1){
         
         xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
         puts("Test periodic wakeup");
-        dim_temp = saul_reg_read(temp, &temp_read);
-        dim_light = saul_reg_read(light, &light_read);
+        dim_temp = saul_reg_read(temp_saul, &temp_read);
+        dim_light = saul_reg_read(light_saul, &light_read);
         if(dim_temp < 0){
             puts("temp read error");
             continue;
@@ -107,11 +112,16 @@ int main(void)
             puts("light read error");
             continue;
         }
+        
+        //to be requested by coap-client
+        temp = temp_read;
+        light = light_read;
+        /*
         puts("Temperatur:");
-        phydat_dump(&temp_read, dim_temp);  
+        phydat_dump(&temp_read, dim_temp);
         puts("RGB-Licht:");
         phydat_dump(&light_read, dim_light); 
-                 
+        */
     }
         	
     return 0;
