@@ -4,7 +4,9 @@
 package de.haw.list.adapter;
 
 /**
- * @author Lydia Pflug 30.10.2017
+ * Client fuer MQTT Uebertragung.
+ * @author Lydia Pflug
+ * 30.10.2017
  */
 public final class MqttClient {
 

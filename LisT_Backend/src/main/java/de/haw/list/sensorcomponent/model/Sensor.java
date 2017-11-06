@@ -33,17 +33,12 @@ public class Sensor {
 	
 	private String name;
 	
-	//TODO lyp 18.10.2017 ggf. auch als Enum anlegen
 	private LocationType location;
 	
 	private float max;
 	
 	private float min;
 	
-//	@OneToMany(fetch = FetchType.EAGER)
-//	//	@JoinColumn(name = "person_id")
-//	private List<SensorValue> sensorValues;
-
 	public Sensor() {}
 
 	public Sensor(String techId, SensorType sensorType, String name, LocationType location, float max, float min) {
@@ -53,12 +48,63 @@ public class Sensor {
 		this.location = location;
 		this.max = max;
 		this.min = min;
-//		this.sensorValues = new ArrayList<>();
 	}
 
 	public int getId() {
 		return id;
 	}
+
+	/**
+	 * Getter fuer techId
+	 * @return the techId
+	 */
+	public String getTechId() {
+		return techId;
+	}
+
+	/**
+	 * Getter fuer sensorType
+	 * @return the sensorType
+	 */
+	public SensorType getSensorType() {
+		return sensorType;
+	}
+
+	/**
+	 * Getter fuer name
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Getter fuer location
+	 * @return the location
+	 */
+	public LocationType getLocation() {
+		return location;
+	}
+
+	/**
+	 * Getter fuer max
+	 * @return the max
+	 */
+	public float getMax() {
+		return max;
+	}
+
+	/**
+	 * Getter fuer min
+	 * @return the min
+	 */
+	public float getMin() {
+		return min;
+	}
+	
+	
+	
+	
 	
 	
 
