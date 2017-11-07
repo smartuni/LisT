@@ -1,49 +1,20 @@
-/*
-var SmartObject = require('smartobject');
-
-// initialize Resources that follow IPSO definition
-var so = new SmartObject();
-
-// initialize your Resources
-// oid = 'temperature', iid = 0
-so.init('temperature', 0, {
-    sensorValue: 21,
-    units: 'C'
-});
-
-// oid = 'lightCtrl', iid = 0
-so.init('lightCtrl', 0, {
-    onOff: false
-});
-
-
-var CoapNode = require('coap-node');
-
-// Instantiate a machine node with a client name and your smart object
-var cnode = new CoapNode('my_first_node', so);
-
-cnode.on('registered', function () {
-
-    // If the registration procedure completes successfully, 'registered' will be fired
-    console.log("registered!!!")
-});
-
-// register to a Server with its ip and port
-cnode.register('fe80::68c0:6d50:52ae:432a', 5683, function (err, rsp) {
-    console.log("register log: " + rsp);      // { status: '2.05' }
-});
-
-*/
-
-//var coap = require('coap')
-//    , server = coap.createServer({type: 'udp6'});
-
-
-//server.on('request', function (req, res) {
-//    res.end('Hello ' + req.url.split('/')[1] + '\n')
-//});
-
 var q = require('q');
+var mqtt = require('mqtt');
+
+var Frontend = {
+    url: 'mqtt://141.22.28.86',
+    port: '1883',
+    subscribeTopic: 'set_target_values',
+    publishTopic: 'iot_data',
+    status: 'disconnected',
+    connect: function () {
+        Frontend.client = mqtt.connect(Frontend.url, {
+            port: Frontend.port
+        });
+    }
+};
+
+
 
 var sensorNodeOne = {
     hostname: "fe80::68c0:6d50:52ae:432a%lowpan0",
@@ -59,6 +30,7 @@ var sensorNodeOne = {
 *
 */
 var productionInterval = setInterval(function () {
+
     updateFromSensors()
         .then(function () {
             console.log("Sensor Update successful");
@@ -84,11 +56,11 @@ function forwardToFrontend() {
 
     return new Promise(function (resolve, reject) {
 
+        console.log("frontend");
         resolve();
 
         //reject();
 
-        console.log("frontend")
     });
 }
 
@@ -101,13 +73,11 @@ function calculate() {
 
     return new Promise(function (resolve, reject) {
 
-
+        console.log("calculate");
         resolve();
-
 
         //reject();
 
-        console.log("calculate")
     });
 }
 
@@ -138,7 +108,6 @@ function updateFromSensors() {
         });
 
     return promise;
-
 }
 
 /*
@@ -146,13 +115,13 @@ function updateFromSensors() {
 *
 *
 */
-function coapRequest(hostname, path, method, clientToServerData) {
+function coapRequest(hostname, path, method, payload) {
 
     return new Promise(function (resolve, reject) {
 
-        let coap = require('coap');
+        var coap = require('coap');
 
-        let servicesRequest = coap.request({
+        var servicesRequest = coap.request({
             hostname: hostname,
             pathname: path,
             method: method,
@@ -162,13 +131,13 @@ function coapRequest(hostname, path, method, clientToServerData) {
 
 
         if (method == "PUT") {
-            servicesRequest.write(JSON.stringify(clientToServerData));
-            console.log("Sensor " + method + " on: " + hostname, path + " ----> " + clientToServerData);
+            servicesRequest.write(JSON.stringify(payload));
+            console.log("Sensor " + method + " on: " + hostname, path + " ----> " + payload);
 
             servicesRequest.on('response', function (servicesResponse) {
                 servicesResponse.on('error', function (error) {
                     console.log(error);
-                    reject();
+                    reject(error);
                 });
 
                 let tmp = servicesResponse.payload.toString();
@@ -182,7 +151,7 @@ function coapRequest(hostname, path, method, clientToServerData) {
             servicesRequest.on('response', function (servicesResponse) {
                 servicesResponse.on('error', function (error) {
                     console.log(error);
-                    reject();
+                    reject(error);
                 });
 
                 let tmp = servicesResponse.payload.toString();
@@ -201,36 +170,28 @@ function coapRequest(hostname, path, method, clientToServerData) {
 
 
 //CLIENT ############################################################
-/*
-var mqtt = require('mqtt'),
-/*
-    my_topic_name = 'iot_data';
 
-var client = mqtt.connect('mqtt://141.22.28.86', {
-    port: 1883
-    //username: 'riotadmin',
-    //password: '2whiteRUSSIAN4me'
+Frontend.connect();
+
+Frontend.client.on('connect', function () {
+    Frontend.status = 'connected';
+    Frontend.client.subscribe(Frontend.subscribeTopic);
+    console.log("Frontend connected and subscribed to: " + Frontend.subscribeTopic);
 });
 
-client.on('connect', function () {
-    client.subscribe(my_topic_name);
-    console.log("i am connected");
-});
-
-client.on('error', function (error) {
+Frontend.client.on('error', function (error) {
     console.log('MQTT Client Errored');
     console.log(error);
 });
 
-client.on('message', function (topic, message) {
+Frontend.client.on('message', function (topic, message) {
     // Do some sort of thing here.
 
     console.log(message.toString());
 
-    client.publish('iot_data', 'Dies das jenes')
-});
-*/
 
+});
+Frontend.client.publish('iot_data', 'Dies das jenes')
 
 //SERVER ############################################################
 /*var mosca = require('mosca');
