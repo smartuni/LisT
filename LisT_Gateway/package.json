@@ -10,8 +10,10 @@
     "coap": "0.21.0",
     "mqtt": "2.13.1",
     "mosca": "2.6.0",
-    "coap-node": "0.2.5",
-    "q": "^1.5.1"
+    "q": "^1.5.1",
+    "console-log-level":"^1.4.0",
+    "colors": "^1.1.2",
+    "jetty":"^0.2.1"
   },
   "directories": {},
   "optionalDependencies": {},
