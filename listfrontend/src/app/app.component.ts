@@ -1,17 +1,13 @@
 import { SensorService } from './sensor.service';
 import { Sensors } from './sensors';
+import { ValueService } from './value.service';
+import { Values } from './values';
 import { Component, OnInit } from '@angular/core';
 
 
 @Component({
   selector: 'bm-list',
-  template: `
-  <h1>{{title}}</h1>
-  <h2>{{title2}}</h2>,
-  <h3>Fehler: {{errorMessage}}</h3>
-  <div *ngIf="loading">loading...</div>
-  <pre>Temp: {{ data | json }}</pre>
-  `
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   title = 'LisT';
@@ -20,18 +16,26 @@ export class AppComponent implements OnInit {
   errorMessage = '----';
   data: any;
   loading = true;
-  result: string[];
+  sensors: Sensors[];
+  values: Values[];
 
-  constructor(private sensorSevice: SensorService) {}
+  constructor(
+    private sensorService: SensorService,
+    private valueService: ValueService
+  ) { }
 
   ngOnInit() {
-  this.makeRequest();
+  this.getSensors();
+    this.getValues();
   }
 
-  makeRequest() {
-    this.sensorSevice.getSensors().subscribe(
-      data => this.data = data[result],
-      e => this.errorMessage = e,
-      () => this.loading = false);
+  getSensors(): void {
+    this.sensorService.getSensors()
+    .subscribe(sensors => this.sensors = sensors);
+  }
+
+  getValues(): void {
+   this.valueService.getValues()
+    .subscribe(values => this.values = values);
   }
 }
