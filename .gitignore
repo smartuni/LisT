@@ -64,7 +64,9 @@ firmware/coap/.kdev4/
 firmware/coap/bin/
 *.kdev4
 
+firmware/actuators/bin/
 
 firmware/RIOT/\.vagrant/machines/default/virtualbox/
 LisT_Firmware/sensoren/bin
 firmware/sensoren/bin/
+firmware/rgb_minimal/
