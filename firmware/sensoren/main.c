@@ -68,7 +68,8 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
-/*static const shell_command_t shell_commands[] = {
+/*
+static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
 };
@@ -87,7 +88,7 @@ int main(void)
     gnrc_netapi_set(ifs[0], NETOPT_CHANNEL, 0, &channel, sizeof(channel));
 
     // RGB-LED actuator, initialise GPIO ports
-    gpio_init(GPIO_PIN(3, 6), GPIO_OUT); // red LED
+    //gpio_init(GPIO_PIN(3, 6), GPIO_OUT); // red LED
     //init_out(0, 4); // blue LED
     //init_out(3, 4); // green LED
 
@@ -135,12 +136,19 @@ int main(void)
         //to be requested by coap-client
         temp = temp_read;
         light = light_read;
-        /*
+        
         puts("Temperatur:");
         phydat_dump(&temp_read, dim_temp);
+        printf("temp.val[0] = %d\n", temp.val[0]);
+        printf("temp.val[1] = %d\n", temp.val[1]);
         puts("RGB-Licht:");
-        phydat_dump(&light_read, dim_light); 
-
+        phydat_dump(&light_read, dim_light);
+        printf("light.val[0] = %d\n", light.val[0]);
+        printf("light.val[1] = %d\n", light.val[1]);
+        printf("light.val[2] = %d\n", light.val[2]);
+        printf("/cli/stats: %d\n", req_count);
+        printf("-------------------------------------------\n");
+        
         //rgbled_init(rgbled_t *led, pwm_t pwm, int channel_r, int channel_g, int channel_b);
         //rgbled_set(const rgbled_t *led, color_rgb_t *color);
                  
