@@ -3,14 +3,9 @@
  */
 package de.haw.list.sensorcomponent.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 import de.haw.list.sensorcomponent.util.LocationType;
 import de.haw.list.sensorcomponent.util.SensorType;

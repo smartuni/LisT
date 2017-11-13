@@ -4,6 +4,9 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+	    maven {
+        	url "https://repo.eclipse.org/content/repositories/paho-releases/"
+    	}
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -21,6 +24,9 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven {
+    	url "https://repo.eclipse.org/content/repositories/paho-releases/"
+	}
 }
 
 
@@ -28,10 +34,11 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2')
+	compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0')
 	//compile ('mysql:mysql-connector-java:6.0.6')
 	runtime('com.h2database:h2')
 	//runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
 	
 }

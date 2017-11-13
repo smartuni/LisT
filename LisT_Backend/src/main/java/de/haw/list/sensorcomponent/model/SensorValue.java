@@ -5,7 +5,7 @@ package de.haw.list.sensorcomponent.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -30,12 +30,9 @@ public class SensorValue {
 	@GeneratedValue
 	private int id;
 	
-	//@OneToMany
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
-//	@Column(name = "sensorid")
-//	@JoinColumn(name = "sensor_id")
 	private Sensor sensor;
 	
 	private double value;

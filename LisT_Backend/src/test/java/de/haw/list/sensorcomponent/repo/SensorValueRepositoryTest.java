@@ -2,7 +2,6 @@ package de.haw.list.sensorcomponent.repo;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -76,20 +75,20 @@ public class SensorValueRepositoryTest {
 	
 	@Test
 	public void testFindLatestValueBySensor() {
-//		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
-//		assertEquals(sv1.getId(), result.getId());
+		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
+		assertEquals(sv1.getId(), result.getId());
 		
-//		List<SensorValue> result2 = sensorValueRepo.findValueBySensor();
-//		assertEquals(2, result2.size());
-//		System.out.println("################ Test ################");
-//		
-//		List<SensorValue> result3 = sensorValueRepo.findValueBySensor(sensor1.getId());
-//		assertEquals(2, result3.size());
-//		System.out.println("################ Test ################");
-//		
-//		List<SensorValue> result4 = sensorValueRepo.findValueByTimestamp(ld);
-//		assertEquals(12, result4.size());
-//		System.out.println("################ Test ################");
+		List<SensorValue> result2 = sensorValueRepo.findValueBySensor();
+		assertEquals(2, result2.size());
+		System.out.println("################ Test ################");
+		
+		List<SensorValue> result3 = sensorValueRepo.findValueBySensor(sensor1.getId());
+		assertEquals(2, result3.size());
+		System.out.println("################ Test ################");
+		
+		List<SensorValue> result4 = sensorValueRepo.findValueByTimestamp();
+		assertEquals(1, result4.size());
+		System.out.println("################ Test ################");
 		
 		
 	}
