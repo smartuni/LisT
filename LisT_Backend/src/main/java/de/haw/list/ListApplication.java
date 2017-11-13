@@ -48,8 +48,8 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 	@Transactional
 	public void run(String... args) throws Exception {
 		
-		sensorValueRepo.deleteAll();
-		sensorRepo.deleteAll();
+//		sensorValueRepo.deleteAll();
+//		sensorRepo.deleteAll();
 		
 		Sensor sensor1 = new Sensor("s1", SensorType.TEMPERATURE, "TemperatureSensor", LocationType.INSIDE, 20, 15);
 		
