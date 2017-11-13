@@ -122,14 +122,22 @@ int main(void)
         //to be requested by coap-client
         temp = temp_read;
         light = light_read;
-
-        // output
+        
         puts("Temperatur:");
         phydat_dump(&temp_read, dim_temp);
+        printf("temp.val[0] = %d\n", temp.val[0]);
+        printf("temp.val[1] = %d\n", temp.val[1]);
         puts("RGB-Licht:");
-        phydat_dump(&light_read, dim_light); 
-        xtimer_sleep(10);
+        phydat_dump(&light_read, dim_light);
+        printf("light.val[0] = %d\n", light.val[0]);
+        printf("light.val[1] = %d\n", light.val[1]);
+        printf("light.val[2] = %d\n", light.val[2]);
+        printf("/cli/stats: %d\n", req_count);
+        printf("-------------------------------------------\n");
         
+        //rgbled_init(rgbled_t *led, pwm_t pwm, int channel_r, int channel_g, int channel_b);
+        //rgbled_set(const rgbled_t *led, color_rgb_t *color);
+                 
     }
         	
     return 0;

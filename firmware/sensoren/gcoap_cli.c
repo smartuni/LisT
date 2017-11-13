@@ -37,15 +37,16 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _light_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
-/* CoAP resources */
+// CoAP resources
+// WARNING: resources must order alphabetically <- from gcoap.h line: 413
 static const coap_resource_t _resources[] = {
     { "/cli/stats", COAP_GET | COAP_PUT, _stats_handler },
-    { "/temp", COAP_GET, _temp_handler},
-    { "/light", COAP_GET, _light_handler},
+    { "/light", COAP_GET, _lightout_handler},
     { "/riot/board", COAP_GET, _riot_board_handler },
+    { "/temp", COAP_GET, _temp_handler},
 };
 
 static gcoap_listener_t _listener = {
@@ -55,7 +56,8 @@ static gcoap_listener_t _listener = {
 };
 
 /* Counts requests sent by CLI. */
-static uint16_t req_count = 0;
+uint16_t req_count = 0;
+uint16_t req_count2 = 0;
 
 //data variables
 phydat_t temp = { .val = {0}, .unit = 0, .scale = 0};
@@ -130,6 +132,7 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
             if (pdu->payload_len <= 5) {
                 char payload[6] = { 0 };
                 memcpy(payload, (char *)pdu->payload, pdu->payload_len);
+
                 req_count = (uint16_t)strtoul(payload, NULL, 10);
                 return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
             }
@@ -160,32 +163,33 @@ static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
     return 0;
 }
 
-static ssize_t _light_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
 {
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
-
+    
     switch(method_flag) {
         case COAP_GET:
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-
+            
             /* write the response buffer with the requested data (light) */
             //NOTE: signed value for data
             //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
             
-            memcpy(pdu->payload, light.val, sizeof(light.val));
+            size_t payload_len = sprintf((char *)pdu->payload, "{'red': %d, 'green': %d, 'blue:' %d}", light.val[0], light.val[1], light.val[2]);
 
-            return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
+            //memcpy(pdu->payload, light.val, sizeof(light.val));
 
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            //return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
     }
 
     return 0;
 }
 
-
 static ssize_t _riot_board_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len)
 {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    /* write the RIOT board name in the response buffer */
+    // write the RIOT board name in the response buffer
     memcpy(pdu->payload, RIOT_BOARD, strlen(RIOT_BOARD));
     return gcoap_finish(pdu, strlen(RIOT_BOARD), COAP_FORMAT_TEXT);
 }
@@ -215,7 +219,7 @@ static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
 
     bytes_sent = gcoap_req_send2(buf, len, &remote, _resp_handler);
     if (bytes_sent > 0) {
-        req_count++;
+        req_count2++;
     }
     return bytes_sent;
 }
@@ -256,7 +260,7 @@ int gcoap_cli_cmd(int argc, char **argv)
                             &_resources[0])) {
                     case GCOAP_OBS_INIT_OK:
                         DEBUG("gcoap_cli: creating /cli/stats notification\n");
-                        size_t payload_len = fmt_u16_dec((char *)pdu.payload, req_count);
+                        size_t payload_len = fmt_u16_dec((char *)pdu.payload, req_count2);
                         len = gcoap_finish(&pdu, payload_len, COAP_FORMAT_TEXT);
                         gcoap_obs_send(&buf[0], len, &_resources[0]);
                         break;
@@ -283,7 +287,7 @@ int gcoap_cli_cmd(int argc, char **argv)
             uint8_t open_reqs = gcoap_op_state();
 
             printf("CoAP server is listening on port %u\n", GCOAP_PORT);
-            printf(" CLI requests sent: %u\n", req_count);
+            printf(" CLI requests sent: %u\n", req_count2);
             printf("CoAP open requests: %u\n", open_reqs);
             return 0;
         }
