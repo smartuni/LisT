@@ -16,4 +16,8 @@ int16_t overflow when light sensor senses very bright light
 
 size_t is unsigned int
 
-TODO: LED on/off (heating) 
+TODO: LED on/off (heating)
+TODO: broadcast, what am I? #coap 
+
+working on native:
+https://github.com/RIOT-OS/RIOT/tree/master/examples/gnrc_networking

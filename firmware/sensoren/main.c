@@ -63,8 +63,8 @@ extern void gcoap_cli_init(void);
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
-};
-*/
+};*/
+
 
 
 int main(void)
