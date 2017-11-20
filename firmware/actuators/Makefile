@@ -1,8 +1,8 @@
 # name of your application
-APPLICATION = sensors
+APPLICATION = actuators
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= pba-d-01-kw2x
+BOARD ?= samr21-xpro
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../RIOT
@@ -13,17 +13,6 @@ BOARD_INSUFFICIENT_MEMORY := chronos msb-430 msb-430h nucleo32-f031 nucleo32-f04
                              nucleo32-l031 nucleo-f030 nucleo-f334 nucleo-l053 \
                              stm32f0discovery telosb wsn430-v1_3b wsn430-v1_4 z1
 
-## Uncomment to redefine port, for example use 61616 for RFC 6282 UDP compression.
-#GCOAP_PORT = 5683
-#CFLAGS += -DGCOAP_PORT=$(GCOAP_PORT)
-
-## Uncomment to redefine request token length, max 8.
-#GCOAP_TOKENLEN = 2
-#CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
-
-# Include packages for the RGB aktuators
-#FEATURES_REQUIRED = periph_gpio
-#FEATURES_REQUIRED = periph_pwm
 USEMODULE += rgbled
 
 # Include packages that pull up and auto-init the link layer.
@@ -47,9 +36,9 @@ USEMODULE += ps
 #####################################
 
 # include and auto-initialize all available sensors
-USEMODULE += saul_default
+#USEMODULE += saul_default
 # we want to use xtimer:
-USEMODULE += xtimer
+#USEMODULE += xtimer
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the

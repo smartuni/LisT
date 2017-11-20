@@ -10,7 +10,7 @@
  * @{
  *
  * @file
- * @brief       reading the sensor values
+ * @brief       controlling 
  *
  * @author      Katrin Moritz <katrin.moritz@haw-hamburg.de>
  * @author      Sebastian Frisch <JohannesSebastian.Frisch@haw-hambrug.de>
@@ -27,15 +27,10 @@
 #include "kernel_types.h"
 
 // SAUL, drivers
-//#include "shell.h"
-#include "saul.h"
+/*#include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
-
-// Timer
-#include "xtimer.h"
-#include "timex.h"
-
+*/
 
 // Network
 #include "net/ipv6/addr.h"
@@ -51,8 +46,13 @@
 
 #include "gcoap_cli.h"
 
+//#include "shell.h"
+
+// RGB-LED
+#include "rgbled.h"
 
 #define MAIN_QUEUE_SIZE (4)
+
 
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
@@ -66,77 +66,41 @@ static const shell_command_t shell_commands[] = {
 };
 */
 
-
 int main(void)
 {
-    // sensors
-	phydat_t temp_read, light_read;
-    int dim_temp, dim_light;
 
+    // RGB values
+    rgbled_t led;
+    color_rgb_t color = {red, green, blue};
+    rgbled_init(&led, PWM_DEV(1), 0, 1, 2);
+    
     //change lowpan channel to 20
     uint16_t channel=20;
     kernel_pid_t ifs[GNRC_NETIF_NUMOF];
     gnrc_netif_get(ifs);
     gnrc_netapi_set(ifs[0], NETOPT_CHANNEL, 0, &channel, sizeof(channel));
     
-    
     /* for the thread running the shell */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     gcoap_cli_init();
     // 6LoWpan init
     gnrc_sixlowpan_init();
-	
-	puts("Welcome to the RIOT-PO!\n");
-	
-	saul_reg_t *temp_saul = saul_reg_find_name("tmp006");
-    saul_reg_t *light_saul = saul_reg_find_type(SAUL_SENSE_COLOR);
-
-	if (temp_saul == NULL || light_saul == NULL) {
-        DEBUG("[ERROR] Unable to find sensors\n");
-        return 0;
-	}
-
-    /* start shell */
+    
+    puts("Welcome to the RIOT-PO!\n");
+    
     /*
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
     */
 
-    xtimer_sleep(1);
     while(1){
-        
-       //xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
-        puts("Test periodic wakeup");
-        dim_temp = saul_reg_read(temp_saul, &temp_read);
-        dim_light = saul_reg_read(light_saul, &light_read);
-        if(dim_temp < 0){
-            puts("temp read error");
-            continue;
-        }
-        if(dim_light < 0) {
-            puts("light read error");
-            continue;
-        }
-        
-        //to be requested by coap-client
-        temp = temp_read;
-        light = light_read;
-        
-        puts("Temperatur:");
-        phydat_dump(&temp_read, dim_temp);
-        printf("temp.val[0] = %d\n", temp.val[0]);
-        printf("temp.val[1] = %d\n", temp.val[1]);
-        puts("RGB-Licht:");
-        phydat_dump(&light_read, dim_light);
-        printf("light.val[0] = %d\n", light.val[0]);
-        printf("light.val[1] = %d\n", light.val[1]);
-        printf("light.val[2] = %d\n", light.val[2]);
-        printf("/cli/stats: %d\n", req_count);
-        printf("-------------------------------------------\n");
-        xtimer_sleep(10);
-                 
+
+        color.r = red;
+        color.g = green;
+        color.b = blue;
+        rgbled_set(&led, &color);
     }
-        	
+            
     return 0;
 }
