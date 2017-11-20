@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package de.haw.list.sensorcomponent.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -16,22 +19,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.haw.list.ListApplication;
+import de.haw.list.sensorcomponent.SensorViewServiceImpl;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
 import de.haw.list.sensorcomponent.util.LocationType;
+import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 import de.haw.list.sensorcomponent.util.SensorType;
 
 /**
- * Testet {@link SensorValueRepository}.
- * 
+ * Testet {@link SensorViewServiceImpl}.
  * @author Lydia Pflug
- * 26.10.2017
+ * 13.11.2017
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @ContextConfiguration(classes = ListApplication.class)
 @ActiveProfiles("test")
-public class SensorValueRepositoryTest {
+public class SensorViewServiceImplTest {
 
 	private Sensor sensor1;
 	
@@ -54,6 +58,9 @@ public class SensorValueRepositoryTest {
 	
 	@Autowired
 	private SensorRepository sensorRepo;
+	
+	@Autowired 
+	public SensorViewServiceImpl sensorViewServiceImpl;
 	
 	@Before
 	public void setUp() {
@@ -83,31 +90,11 @@ public class SensorValueRepositoryTest {
 	}
 	
 	@Test
-	public void testFindLatestValueBySensor() {
-		SensorValue result = sensorValueRepo.findLatestValueBySensor(sensor1.getId()).get();
-		assertEquals(sv1.getId(), result.getId());
+	public void testGetValuesFromSensor() throws SensorNotFoundException {
 		
-		List<SensorValue> result2 = sensorValueRepo.findValueBySensor();
-		assertEquals(6, result2.size());
-		System.out.println("################ Test ################");
-		
-		List<SensorValue> result3 = sensorValueRepo.findValueBySensor(sensor1.getId());
-		assertEquals(2, result3.size());
-		System.out.println("################ Test ################");
-		
-		List<SensorValue> result4 = sensorValueRepo.findValueByTimestamp();
-		assertEquals(2, result4.size());
-		System.out.println("################ Test ################");
-		
-		
-	}
-	
-	@Test
-	public void testFindAllBySensor() {
-		List<SensorValue> result = sensorValueRepo.findAllBySensor(sensor2);
+		List<SensorValue> result = sensorViewServiceImpl.getValuesFromSensor(sensor2.getId());
 		assertEquals(4, result.size());
-		List<SensorValue> result3 = sensorValueRepo.findValueBySensor(sensor2.getId());
-		assertEquals(4, result3.size());
 	}
 	
+
 }

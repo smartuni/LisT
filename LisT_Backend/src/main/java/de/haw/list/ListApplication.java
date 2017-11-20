@@ -5,7 +5,11 @@ import java.util.Arrays;
 
 import javax.transaction.Transactional;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +18,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
+import de.haw.list.adapter.MqttConsumer;
 import de.haw.list.adapter.SimpleMqttCallback;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.model.Sensor;
@@ -72,9 +77,57 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 		logRepo.save(Arrays.asList(log1, log2));
 		
-//		MqttClient client=new MqttClient("tcp://localhost:1883", MqttClient.generateClientId());
+		MqttConsumer c = new MqttConsumer(logRepo);
+        c.consume();
+		
+		MemoryPersistence persistence = new MemoryPersistence();
+//		MqttClient client=new MqttClient("tcp://localhost:1883", MqttClient.generateClientId(), persistence);
 //		client.setCallback( new SimpleMqttCallback(logRepo));
 //		client.connect();
+		
+//		MqttClient client = new MqttClient("tcp://localhost:1883", "1", persistence);
+//
+//		client.setCallback(new MqttCallback() {
+//			@Override
+//			public void connectionLost(Throwable throwable) {
+//				System.out.println("Connection to MQTT broker lost!");
+//				logRepo.save(new Log("Connection to MQTT broker lost!"));
+//			}
+//
+//			@Override
+//			public void messageArrived(String t, MqttMessage m) throws Exception {
+//				System.out.println(new String(m.getPayload()));
+//				logRepo.save(new Log(t));
+//				logRepo.save(new Log(new String(m.getPayload())));
+//			}
+//
+//			@Override
+//			public void deliveryComplete(IMqttDeliveryToken t) {
+//			}
+//		});
+//
+//		client.connect();
+		
+		
+		logRepo.save(new Log("Connection erstellt"));
+		
+		
+		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
+
+		client2.connect();
+
+		MqttMessage message = new MqttMessage("Hallo Welt".getBytes());
+		client2.publish("test", message);
+		
+		logRepo.save(new Log("message publish: Hallo Welt"));
+		logRepo.save(new Log("topic publish: test/begruessung"));
+
+		client2.disconnect();
+		
+		logRepo.save(new Log("Nachricht abgeschickt"));
+		
+		System.out.println("Fertig!");
+		
 
 
 		//		simpleMqttClient = new SimpleMqttClient();
