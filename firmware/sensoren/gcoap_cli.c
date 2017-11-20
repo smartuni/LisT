@@ -154,12 +154,13 @@ static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
 
             /* write the response buffer with the requested data (temp) */
             //NOTE: signed value for data
-            size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            size_t payload_len = sprintf((char *)pdu->payload, "{'surface-temp': %d, 'ambient-temp': %d,}", temp.val[0], temp.val[1]);
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
 
     }
-
+    
     return 0;
 }
 

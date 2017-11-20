@@ -14,4 +14,6 @@ or GCOAP_PORT = 5683 in Makefile //see RIOT/examples/gcoap/Makefile
 
 int16_t overflow when light sensor senses very bright light
 
-size_t is unsigned int 
+size_t is unsigned int
+
+TODO: LED on/off (heating) 
