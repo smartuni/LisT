@@ -134,9 +134,7 @@ int main(void)
         printf("light.val[2] = %d\n", light.val[2]);
         printf("/cli/stats: %d\n", req_count);
         printf("-------------------------------------------\n");
-        
-        //rgbled_init(rgbled_t *led, pwm_t pwm, int channel_r, int channel_g, int channel_b);
-        //rgbled_set(const rgbled_t *led, color_rgb_t *color);
+        xtimer_sleep(10);
                  
     }
         	

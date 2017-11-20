@@ -29,16 +29,16 @@ USEMODULE += gnrc_icmpv6_echo
 USEMODULE += od
 USEMODULE += fmt
 # Add also the shell, some shell commands
-#USEMODULE += shell
-#USEMODULE += shell_commands
-#USEMODULE += ps
+USEMODULE += shell
+USEMODULE += shell_commands
+USEMODULE += ps
 
 #####################################
 
 # include and auto-initialize all available sensors
-USEMODULE += saul_default
+#USEMODULE += saul_default
 # we want to use xtimer:
-USEMODULE += xtimer
+#USEMODULE += xtimer
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the

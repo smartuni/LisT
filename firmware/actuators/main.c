@@ -27,10 +27,10 @@
 #include "kernel_types.h"
 
 // SAUL, drivers
-#include "saul.h"
+/*#include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
-
+*/
 
 // Network
 #include "net/ipv6/addr.h"
@@ -46,6 +46,8 @@
 
 #include "gcoap_cli.h"
 
+//#include "shell.h"
+
 // RGB-LED
 #include "rgbled.h"
 
@@ -57,14 +59,18 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
+/*
+static const shell_command_t shell_commands[] = {
+    { "coap", "CoAP example", gcoap_cli_cmd },
+    { NULL, NULL, NULL }
+};
+*/
+
 int main(void)
 {
 
     // RGB values
-    rgbled_t led; 
-    uint8_t red = 0;
-    uint8_t green = 0;
-    uint8_t blue = 0;
+    rgbled_t led;
     color_rgb_t color = {red, green, blue};
     rgbled_init(&led, PWM_DEV(1), 0, 1, 2);
     
@@ -82,8 +88,17 @@ int main(void)
     
     puts("Welcome to the RIOT-PO!\n");
     
+    /*
+    puts("All up, running the shell now");
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
+    */
+
     while(1){
 
+        color.r = red;
+        color.g = green;
+        color.b = blue;
         rgbled_set(&led, &color);
     }
             
