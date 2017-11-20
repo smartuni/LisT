@@ -68,3 +68,5 @@ firmware/coap/bin/
 firmware/RIOT/\.vagrant/machines/default/virtualbox/
 LisT_Firmware/sensoren/bin
 firmware/sensoren/bin/
+firmware/actuators/bin/
+firmware/rgb_minimal/bin/
