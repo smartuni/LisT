@@ -122,7 +122,7 @@ int main(void)
         //to be requested by coap-client
         temp = temp_read;
         light = light_read;
-        
+        /*
         puts("Temperatur:");
         phydat_dump(&temp_read, dim_temp);
         printf("temp.val[0] = %d\n", temp.val[0]);
@@ -134,6 +134,7 @@ int main(void)
         printf("light.val[2] = %d\n", light.val[2]);
         printf("/cli/stats: %d\n", req_count);
         printf("-------------------------------------------\n");
+        */
         xtimer_sleep(10);
                  
     }

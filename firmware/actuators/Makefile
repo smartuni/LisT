@@ -12,7 +12,7 @@ RIOTBASE ?= $(CURDIR)/../../../RIOT
 BOARD_INSUFFICIENT_MEMORY := chronos msb-430 msb-430h nucleo32-f031 nucleo32-f042 \
                              nucleo32-l031 nucleo-f030 nucleo-f334 nucleo-l053 \
                              stm32f0discovery telosb wsn430-v1_3b wsn430-v1_4 z1
-
+# rgb led
 USEMODULE += rgbled
 
 # Include packages that pull up and auto-init the link layer.
@@ -28,17 +28,33 @@ USEMODULE += gnrc_icmpv6_echo
 # Required by gcoap example
 USEMODULE += od
 USEMODULE += fmt
+
+#######################################
+# grove led bar
+USEMODULE += grove_ledbar
+# set default device parameters in case they are undefined
+# the following params are for board pba-d-01-kw2x and pins PA01 and PA02
+TEST_GROVE_LEDBAR_CLK ?= 	GPIO_PIN\(0,13\)
+TEST_GROVE_LEDBAR_DAT ?= 	GPIO_PIN\(0,28\)
+TEST_GROVE_LEDBAR_DIR ?=	GROVE_LEDBAR_G2R
+
+# export parameters
+CFLAGS += -DGROVE_LEDBAR_CLK=$(TEST_GROVE_LEDBAR_CLK)
+CFLAGS += -DGROVE_LEDBAR_DAT=$(TEST_GROVE_LEDBAR_DAT)
+CFLAGS += -DGROVE_LEDBAR_DIR=$(TEST_GROVE_LEDBAR_DIR)
+#####################################
+
 # Add also the shell, some shell commands
 USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
+#######################################
 
-#####################################
 
 # include and auto-initialize all available sensors
 #USEMODULE += saul_default
 # we want to use xtimer:
-#USEMODULE += xtimer
+USEMODULE += xtimer
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
