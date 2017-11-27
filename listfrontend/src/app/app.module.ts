@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { SensorService } from './sensor.service';
+import { ValueService } from './value.service';
 
 
 
@@ -14,9 +15,12 @@ import { SensorService } from './sensor.service';
   ],
   imports: [
     BrowserModule,
-    HttpModule
+    HttpClientModule
   ],
-  providers: [SensorService],
+  providers: [
+    SensorService,
+    ValueService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
