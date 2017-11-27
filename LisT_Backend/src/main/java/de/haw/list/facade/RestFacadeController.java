@@ -1,6 +1,5 @@
 package de.haw.list.facade;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import de.haw.list.actorcomponent.ActorService;
 import de.haw.list.actorcomponent.dto.ActorMqttDto;
 import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.SensorViewService;
-import de.haw.list.sensorcomponent.dto.SensorValueMqttDto;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
 import de.haw.list.sensorcomponent.util.NoValueAvailableException;

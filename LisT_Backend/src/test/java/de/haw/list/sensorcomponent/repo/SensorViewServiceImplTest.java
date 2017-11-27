@@ -104,6 +104,8 @@ public class SensorViewServiceImplTest {
 		
 		List<SensorValue> result = sensorViewServiceImpl.getValuesFromSensor(sensor2.getId());
 		assertEquals(4, result.size());
+		assertEquals(values1, result.get(0).getValues());
+		assertEquals(sensor2.getId(),result.get(0).getSensor().getId());
 	}
 	
 

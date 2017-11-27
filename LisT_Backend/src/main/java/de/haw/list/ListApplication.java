@@ -18,7 +18,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
-import de.haw.list.adapter.MqttConsumer;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
@@ -82,58 +81,29 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		Log log2 = new Log("test2");
 		
 		logRepo.save(Arrays.asList(log1, log2));
-		
-		MqttConsumer c = new MqttConsumer(logRepo);
-        c.consume();
-		
-		MemoryPersistence persistence = new MemoryPersistence();
-//		MqttClient client=new MqttClient("tcp://localhost:1883", MqttClient.generateClientId(), persistence);
-//		client.setCallback( new SimpleMqttCallback(logRepo));
-//		client.connect();
-		
-//		MqttClient client = new MqttClient("tcp://localhost:1883", "1", persistence);
+//		
+//		
+//		MemoryPersistence persistence = new MemoryPersistence();
+//		
+//		logRepo.save(new Log("Connection erstellt"));
+//		
+//		
+//		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
 //
-//		client.setCallback(new MqttCallback() {
-//			@Override
-//			public void connectionLost(Throwable throwable) {
-//				System.out.println("Connection to MQTT broker lost!");
-//				logRepo.save(new Log("Connection to MQTT broker lost!"));
-//			}
+//		client2.connect();
 //
-//			@Override
-//			public void messageArrived(String t, MqttMessage m) throws Exception {
-//				System.out.println(new String(m.getPayload()));
-//				logRepo.save(new Log(t));
-//				logRepo.save(new Log(new String(m.getPayload())));
-//			}
+//		MqttMessage message = new MqttMessage("Hallo Welt".getBytes());
+//		client2.publish("test", message);
+//		
+//		logRepo.save(new Log("message publish: Hallo Welt"));
+//		logRepo.save(new Log("topic publish: test/begruessung"));
 //
-//			@Override
-//			public void deliveryComplete(IMqttDeliveryToken t) {
-//			}
-//		});
-//
-//		client.connect();
-		
-		
-		logRepo.save(new Log("Connection erstellt"));
-		
-		
-		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
-
-		client2.connect();
-
-		MqttMessage message = new MqttMessage("Hallo Welt".getBytes());
-		client2.publish("test", message);
-		
-		logRepo.save(new Log("message publish: Hallo Welt"));
-		logRepo.save(new Log("topic publish: test/begruessung"));
-
-		client2.disconnect();
-		
-		logRepo.save(new Log("Nachricht abgeschickt"));
-		
-		System.out.println("Fertig!");
-		
+//		client2.disconnect();
+//		
+//		logRepo.save(new Log("Nachricht abgeschickt"));
+//		
+//		System.out.println("Fertig!");
+//		
 
 
 		//		simpleMqttClient = new SimpleMqttClient();

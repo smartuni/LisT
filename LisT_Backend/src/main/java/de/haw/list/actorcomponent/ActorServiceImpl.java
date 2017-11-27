@@ -7,22 +7,21 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.haw.list.actorcomponent.dto.ActorMqttDto;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.repo.LogRepository;
-import de.haw.list.sensorcomponent.util.JsonMalFormedException;
-import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 
 /**
  * Implementiert {@link ActorService}.
  * @author Lydia Pflug
  * 20.11.2017
  */
+@Component
 public class ActorServiceImpl implements ActorService{
 	
 	@Autowired

@@ -3,8 +3,6 @@
  */
 package de.haw.list.sensorcomponent;
 
-import java.time.LocalDateTime;
-
 import org.json.JSONObject;
 
 import de.haw.list.sensorcomponent.model.Sensor;
