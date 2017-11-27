@@ -48,6 +48,8 @@ public class SensorValue {
 		this.values = values;
 		this.timestamp = timestamp;
 	}
+	
+	public SensorValue() {}
 
 	public int getId() {
 		return id;
