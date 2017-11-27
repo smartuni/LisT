@@ -1,8 +1,8 @@
 # name of your application
-APPLICATION = sensors
+APPLICATION = actuators
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= pba-d-01-kw2x
+BOARD ?= samr21-xpro
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../../../RIOT
@@ -12,18 +12,7 @@ RIOTBASE ?= $(CURDIR)/../../../RIOT
 BOARD_INSUFFICIENT_MEMORY := chronos msb-430 msb-430h nucleo32-f031 nucleo32-f042 \
                              nucleo32-l031 nucleo-f030 nucleo-f334 nucleo-l053 \
                              stm32f0discovery telosb wsn430-v1_3b wsn430-v1_4 z1
-
-## Uncomment to redefine port, for example use 61616 for RFC 6282 UDP compression.
-#GCOAP_PORT = 5683
-#CFLAGS += -DGCOAP_PORT=$(GCOAP_PORT)
-
-## Uncomment to redefine request token length, max 8.
-#GCOAP_TOKENLEN = 2
-#CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
-
-# Include packages for the RGB aktuators
-#FEATURES_REQUIRED = periph_gpio
-#FEATURES_REQUIRED = periph_pwm
+# rgb led
 USEMODULE += rgbled
 
 # Include packages that pull up and auto-init the link layer.
@@ -39,15 +28,31 @@ USEMODULE += gnrc_icmpv6_echo
 # Required by gcoap example
 USEMODULE += od
 USEMODULE += fmt
+
+#######################################
+# grove led bar
+USEMODULE += grove_ledbar
+# set default device parameters in case they are undefined
+# the following params are for board pba-d-01-kw2x and pins PA01 and PA02
+TEST_GROVE_LEDBAR_CLK ?= 	GPIO_PIN\(0,13\)
+TEST_GROVE_LEDBAR_DAT ?= 	GPIO_PIN\(0,28\)
+TEST_GROVE_LEDBAR_DIR ?=	GROVE_LEDBAR_G2R
+
+# export parameters
+CFLAGS += -DGROVE_LEDBAR_CLK=$(TEST_GROVE_LEDBAR_CLK)
+CFLAGS += -DGROVE_LEDBAR_DAT=$(TEST_GROVE_LEDBAR_DAT)
+CFLAGS += -DGROVE_LEDBAR_DIR=$(TEST_GROVE_LEDBAR_DIR)
+#####################################
+
 # Add also the shell, some shell commands
 USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
+#######################################
 
-#####################################
 
 # include and auto-initialize all available sensors
-USEMODULE += saul_default
+#USEMODULE += saul_default
 # we want to use xtimer:
 USEMODULE += xtimer
 
