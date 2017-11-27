@@ -38,7 +38,7 @@ public class SensorValue {
     @JsonIdentityReference(alwaysAsId = true)
 	private Sensor sensor;
 	
-    @ElementCollection(targetClass=Double.class)
+	@ElementCollection(targetClass=Double.class)
 	private List<Double> values = new ArrayList<>();
 	
 	private LocalDateTime timestamp;
@@ -48,8 +48,6 @@ public class SensorValue {
 		this.values = values;
 		this.timestamp = timestamp;
 	}
-	
-	public SensorValue() {}
 
 	public int getId() {
 		return id;

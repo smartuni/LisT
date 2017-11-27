@@ -6,13 +6,13 @@ package de.haw.list.sensorcomponent.util;
 import java.io.Serializable;
 
 /**
- * Typen fuer Sensoren
+ * Standorte der Sensoren.
  * 
  * @author Lydia Pflug
- * 16.10.2017
+ * 23.10.2017
  */
-public enum SensorType implements Serializable {
-	
-	TEMP, LIGHT, PH;
+public enum LocationType implements Serializable {
 
+	INSIDE, OUTSIDE, ROOM;
+	
 }
