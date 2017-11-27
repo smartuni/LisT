@@ -46,3 +46,16 @@ jar {
         attributes 'Main-Class': 'de.haw.mqttlistener.MqttListenerApp'
     }
 }
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'de.haw.mqttlistener.MqttListenerApp'
+    }
+    baseName = jar.baseName
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3' //version required
+}
