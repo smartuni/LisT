@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.haw.list.actorcomponent.ActorService;
+import de.haw.list.actorcomponent.dto.ActorMqttDto;
 import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.SensorViewService;
+import de.haw.list.sensorcomponent.dto.SensorValueMqttDto;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
 import de.haw.list.sensorcomponent.util.NoValueAvailableException;
@@ -34,6 +37,9 @@ public class RestFacadeController {
 	@Autowired
 	private SensorViewService sensorViewService;
 	
+	@Autowired
+	private ActorService actorService;
+	
 	/**
 	 * Erstellt neuen Sensor.
 	 * 
@@ -50,24 +56,24 @@ public class RestFacadeController {
 	}
 	
 	
-	/**
-	 * Fuegt neuen Sensorwert hinzu.
-	 * 
-	 * @param sensorId ID des Sensors
-	 * @param value Wert des Sensors
-	 * @return Sensorwert
-	 * @throws SensorNotFoundException 
-	 */
-	@RequestMapping(value = "/api/sensors/{id}/values", method = RequestMethod.POST)
-	public ResponseEntity<?> addSensorValue(@PathVariable("id") int sensorId, @RequestBody double value, @RequestBody LocalDateTime timestamp) throws SensorNotFoundException {
-		try {
-			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(sensorId, value, timestamp), HttpStatus.CREATED);
-		} catch (SensorNotFoundException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
+//	/**
+//	 * Fuegt neuen Sensorwert hinzu.
+//	 * 
+//	 * @param sensorId ID des Sensors
+//	 * @param value Wert des Sensors
+//	 * @return Sensorwert
+//	 * @throws SensorNotFoundException 
+//	 */
+//	@RequestMapping(value = "/api/sensors", method = RequestMethod.POST)
+//	public ResponseEntity<?> addSensorValue(@Body SensorValueMqttDto("id") int sensorId, @RequestBody double value, @RequestBody LocalDateTime timestamp) throws SensorNotFoundException {
+//		try {
+//			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(sensorId, value, timestamp), HttpStatus.CREATED);
+//		} catch (SensorNotFoundException e) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 
 	/**
 	 * Gibt Sensor zurueck.
@@ -101,16 +107,14 @@ public class RestFacadeController {
 	/**
 	 * Gibt letzten Wert des Sensors zurueck.
 	 * @param sensorId ID des Sensors
-	 * @return Wert des Sensors
+	 * @return Werte des Sensors
 	 * @throws NoValueAvailableException 
 	 * @throws SensorNotFoundException 
 	 */
 	@RequestMapping(value="/api/sensors/{id}/values/latest", method= RequestMethod.GET)
 	public ResponseEntity<?> getLatestValueFromSensor(@PathVariable("id") Integer sensorId) throws SensorNotFoundException, NoValueAvailableException {
 		try {
-			return new ResponseEntity<Double>(sensorViewService.getLatestValueFromSensor(sensorId), HttpStatus.OK);
-//			return new ResponseEntity<SensorValue>(new SensorValue(new Sensor(), 10.0, LocalDateTime.now()), HttpStatus.OK);
-//			return new ResponseEntity<Double>(10.0, HttpStatus.OK);
+			return new ResponseEntity<List<Double>>(sensorViewService.getLatestValueFromSensor(sensorId), HttpStatus.OK);
 		} catch (SensorNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (NoValueAvailableException e) {
@@ -135,6 +139,22 @@ public class RestFacadeController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	/**
+	 * Setzt neuen Aktor.
+	 * @param actorDto
+	 * @return ResponseEntity
+	 */
+	@RequestMapping(value="/api/actor", method=RequestMethod.PUT)
+	public ResponseEntity<?> setActor(@RequestBody ActorMqttDto actorDto) {
+		try {
+			actorService.setActor(actorDto);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 
 

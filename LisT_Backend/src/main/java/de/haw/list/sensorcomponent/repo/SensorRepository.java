@@ -16,5 +16,7 @@ import de.haw.list.sensorcomponent.model.Sensor;
 public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 
 	public Optional<Sensor> findById(int sensorId);
+	
+	public Optional<Sensor> findByTechId(String techId);
 
 }

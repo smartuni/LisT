@@ -12,10 +12,16 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.repo.LogRepository;
+import de.haw.list.sensorcomponent.util.JsonMalFormedException;
+import de.haw.list.sensorcomponent.util.SensorNotFoundException;
+import net.minidev.json.parser.JSONParser;
 
 /**
  * Consumer fuer MQTT-Nachrichten.
@@ -36,6 +42,9 @@ public class MqttConsumer {
     private String clientId = MqttClient.generateClientId();
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
+    
+    @Autowired
+	private SensorPersistenceService sensorPersistenceService;
 
 	@Autowired
 	public MqttConsumer(LogRepository logRepo) {
@@ -50,12 +59,15 @@ public class MqttConsumer {
      */
     private class onMessage implements MqttCallback {
 
-        public void messageArrived(String topic, MqttMessage message) {     
+    	@Override
+        public void messageArrived(String topic, MqttMessage message) throws JsonMalFormedException, SensorNotFoundException {     
             System.out.println("Topic: " + topic + ", Message: " + (new String(message.getPayload())));
             System.out.println("Hilfe!!!");
     		logRepo.save(new Log(topic + "/" + message.toString()));
+    		persistMessage(message.toString());
         }
 
+    	@Override
         public void connectionLost(Throwable cause) {
             System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", cause.getMessage());
             connected = false; //reconnect on exception
@@ -63,6 +75,7 @@ public class MqttConsumer {
     		logRepo.save(new Log("Verbindung abgebrochen"));
         }
 
+    	@Override
         public void deliveryComplete(IMqttDeliveryToken token) {
         }
     }
@@ -94,6 +107,23 @@ public class MqttConsumer {
                 } catch(Exception e) {}
             }
         }
+    }
+    
+    private void persistMessage(String message) throws JsonMalFormedException, SensorNotFoundException {
+    	
+    	JSONObject jsonObject = null;
+    	
+    	try {
+    		jsonObject = new JSONObject(message);
+    		logRepo.save(new Log("Konvertiert: " + message));
+    	} catch(JSONException e) {
+    		logRepo.save(new Log(e.toString()));
+    		throw new JsonMalFormedException(message);
+    	}
+    	
+    	sensorPersistenceService.addSensorValue(jsonObject);
+    	
+    	
     }
 
 //    public static void main(String[] args) {

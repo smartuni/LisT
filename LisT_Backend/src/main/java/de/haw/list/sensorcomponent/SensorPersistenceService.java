@@ -5,8 +5,11 @@ package de.haw.list.sensorcomponent;
 
 import java.time.LocalDateTime;
 
+import org.json.JSONObject;
+
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
+import de.haw.list.sensorcomponent.util.JsonMalFormedException;
 import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 
 /**
@@ -31,7 +34,8 @@ public interface SensorPersistenceService {
 	 * @param value Wert des Sensors
 	 * @return Sensorwert
 	 * @throws SensorNotFoundException 
+	 * @throws JsonMalFormedException 
 	 */
-	public SensorValue addSensorValue(int sensorId, double value, LocalDateTime timestamp) throws SensorNotFoundException;
+	public SensorValue addSensorValue(JSONObject jsonObject) throws SensorNotFoundException, JsonMalFormedException;
 
 }		

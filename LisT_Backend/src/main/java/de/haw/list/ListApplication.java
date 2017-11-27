@@ -1,12 +1,12 @@
 package de.haw.list;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -19,7 +19,6 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
 import de.haw.list.adapter.MqttConsumer;
-import de.haw.list.adapter.SimpleMqttCallback;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
@@ -56,19 +55,26 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 //		sensorValueRepo.deleteAll();
 //		sensorRepo.deleteAll();
 		
-		Sensor sensor1 = new Sensor("s1", SensorType.TEMPERATURE, "TemperatureSensor", LocationType.INSIDE, 20, 15);
+		Sensor sensor1 = new Sensor("s1", SensorType.TEMP, "TemperatureSensor", LocationType.INSIDE, 20, 15);
 		
 		sensorRepo.save(sensor1);
 		
-		Sensor sensor2 = new Sensor("s2", SensorType.TEMPERATURE, "TemperatureSensor2", LocationType.INSIDE, 20, 15);
+		Sensor sensor2 = new Sensor("s2", SensorType.TEMP, "TemperatureSensor2", LocationType.INSIDE, 20, 15);
 		
 		sensorRepo.save(sensor2);
 		
-		SensorValue sv1 = new SensorValue(sensor1, 10, LocalDateTime.now());
+		List<Double> values1 = new ArrayList<>();
+		values1.add(10.0);
+		List<Double> values2 = new ArrayList<>();
+		values2.add(12.0);
+		List<Double> values3 = new ArrayList<>();
+		values2.add(13.0);
 		
-		SensorValue sv2 = new SensorValue(sensor2, 12, LocalDateTime.now());
-		SensorValue sv3 = new SensorValue(sensor2, 13, LocalDateTime.now());
-		SensorValue sv4 = new SensorValue(sensor2, 14, LocalDateTime.now());
+		SensorValue sv1 = new SensorValue(sensor1, values1, LocalDateTime.now());
+		
+		SensorValue sv2 = new SensorValue(sensor2, values1, LocalDateTime.now());
+		SensorValue sv3 = new SensorValue(sensor2, values2, LocalDateTime.now());
+		SensorValue sv4 = new SensorValue(sensor2, values3, LocalDateTime.now());
 		
 		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4));
 		
