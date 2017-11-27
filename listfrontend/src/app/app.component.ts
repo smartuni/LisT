@@ -5,10 +5,13 @@ import { Values } from './values';
 import { Component, OnInit } from '@angular/core';
 
 
+
+
 @Component({
   selector: 'bm-list',
   templateUrl: './app.component.html'
 })
+
 export class AppComponent implements OnInit {
   title = 'LisT';
   title2 = 'Livig in a smart Tank';
@@ -30,12 +33,14 @@ export class AppComponent implements OnInit {
   }
 
   getSensors(): void {
+    this.loading = true;
     this.sensorService.getSensors()
-    .subscribe(sensors => this.sensors = sensors);
+    .subscribe(sensors => this.sensors = sensors), this.loading = false;
   }
 
   getValues(): void {
-   this.valueService.getValues()
-    .subscribe(values => this.values = values);
+    this.loading = true;
+    this.valueService.getValues()
+    .subscribe(values => this.values = values), this.loading = false;
   }
 }

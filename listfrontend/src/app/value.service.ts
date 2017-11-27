@@ -13,6 +13,6 @@ export class ValueService {
   constructor(private http: HttpClient) { }
 
   getValues(): Observable<Values[]> {
-    return this.http.get(this.baseUrl + '/sensors/?id=1/values');
+    return this.http.get(this.baseUrl + '/sensors/1/values');
   }
 }

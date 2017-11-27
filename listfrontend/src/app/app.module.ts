@@ -6,16 +6,26 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { SensorService } from './sensor.service';
 import { ValueService } from './value.service';
+import { StatisticsComponent } from './statistics/statistics.component';
 
+import { NgxLineChartModule } from 'ngx-line-chart';
+import { AppRoutingModule } from './/app-routing.module';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StatisticsComponent,
+    ToolbarComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxLineChartModule,
+    AppRoutingModule
   ],
   providers: [
     SensorService,

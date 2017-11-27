@@ -1,5 +1,5 @@
 export enum sensors_enum {
-  TEMPERATURE,
+  TEMP,
   LIGHT,
   PH,
 }
