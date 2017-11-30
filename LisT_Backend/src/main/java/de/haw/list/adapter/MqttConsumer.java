@@ -3,8 +3,6 @@
  */
 package de.haw.list.adapter;
 
-import java.util.function.Consumer;
-
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -12,10 +10,15 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.repo.LogRepository;
+import de.haw.list.sensorcomponent.util.JsonMalFormedException;
+import de.haw.list.sensorcomponent.util.SensorNotFoundException;
 
 /**
  * Consumer fuer MQTT-Nachrichten.
@@ -29,14 +32,18 @@ public class MqttConsumer {
     private String server = "localhost";
     private String port = "1883";
     private String broker = "tcp://" + server + ":" + port;
-    private String vhost = "yourvhost";
-    private String username = "username";
-    private String password = "password";
-    private String topic = "test/#";
+//    private String vhost = "yourvhost";
+//    private String username = "username";
+//    private String password = "password";
+    private String topic = "sensor/#";
     private String clientId = MqttClient.generateClientId();
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
 
+    @Autowired 
+    private SensorPersistenceService sensorPersistenceService; 
+   
+    
 	@Autowired
 	public MqttConsumer(LogRepository logRepo) {
 		this.logRepo = logRepo;
@@ -50,10 +57,11 @@ public class MqttConsumer {
      */
     private class onMessage implements MqttCallback {
 
-        public void messageArrived(String topic, MqttMessage message) {     
+        public void messageArrived(String topic, MqttMessage message) throws JsonMalFormedException, SensorNotFoundException {     
             System.out.println("Topic: " + topic + ", Message: " + (new String(message.getPayload())));
             System.out.println("Hilfe!!!");
     		logRepo.save(new Log(topic + "/" + message.toString()));
+    		persistMessage(message.toString());
         }
 
         public void connectionLost(Throwable cause) {
@@ -96,10 +104,20 @@ public class MqttConsumer {
         }
     }
 
-//    public static void main(String[] args) {
-//        MqttConsumer c = new MqttConsumer(logRepo);
-//        c.consume();
-//    }
-	
+    private void persistMessage(String message) throws JsonMalFormedException, SensorNotFoundException { 
+        
+        JSONObject jsonObject = null; 
+         
+        try { 
+          jsonObject = new JSONObject(message); 
+          logRepo.save(new Log("Konvertiert: " + message)); 
+        } catch(JSONException e) { 
+          logRepo.save(new Log(e.toString())); 
+          throw new JsonMalFormedException(message); 
+        } 
+         
+        sensorPersistenceService.addSensorValue(jsonObject); 
+         
+      } 
 
 }

@@ -48,7 +48,7 @@ public class SensorViewServiceImpl implements SensorViewService {
 	}
 
 	@Override
-	public double getLatestValueFromSensor(int sensorId) throws SensorNotFoundException, NoValueAvailableException {
+	public List<Double> getLatestValueFromSensor(int sensorId) throws SensorNotFoundException, NoValueAvailableException {
 		Optional<Sensor> sensorOptional = sensorRepo.findById(sensorId);
 
 		if (!sensorOptional.isPresent()) {
@@ -61,7 +61,7 @@ public class SensorViewServiceImpl implements SensorViewService {
 			throw new NoValueAvailableException(String.valueOf(sensorId));
 		}
 		
-		return sensorValueOptional.get().getValue();
+		return sensorValueOptional.get().getValues();
 		
 	}
 

@@ -4,8 +4,11 @@
 package de.haw.list.sensorcomponent.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,15 +38,18 @@ public class SensorValue {
     @JsonIdentityReference(alwaysAsId = true)
 	private Sensor sensor;
 	
-	private double value;
-	
+	@ElementCollection
+	private List<Double> values = new ArrayList<>(); 
+	  
 	private LocalDateTime timestamp;
 	
-	public SensorValue(Sensor sensor, double value, LocalDateTime timestamp) {
+	public SensorValue(Sensor sensor, List<Double> values, LocalDateTime timestamp) {
 		this.sensor = sensor;
-		this.value = value;
+		this.values = values;
 		this.timestamp = timestamp;
 	}
+	
+	public SensorValue() {}
 
 	public int getId() {
 		return id;
@@ -61,8 +67,8 @@ public class SensorValue {
 	 * Getter fuer value
 	 * @return the value
 	 */
-	public double getValue() {
-		return value;
+	public List<Double> getValues() {
+		return new ArrayList<>(values);
 	}
 
 	/**

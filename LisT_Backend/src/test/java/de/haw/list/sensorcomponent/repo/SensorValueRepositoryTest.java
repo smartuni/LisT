@@ -3,6 +3,7 @@ package de.haw.list.sensorcomponent.repo;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,12 +72,17 @@ public class SensorValueRepositoryTest {
 		
 		ld = LocalDateTime.now();
 		
-		sv1 = new SensorValue(sensor1, 10, ld);
-		sv2 = new SensorValue(sensor1, 12, ld.minusDays(1));
-		sv3 = new SensorValue(sensor2, 10, ld);
-		sv4 = new SensorValue(sensor2, 12, ld.minusDays(1));
-		sv5 = new SensorValue(sensor2, 10, ld.minusDays(2));
-		sv6 = new SensorValue(sensor2, 12, ld.minusDays(3));
+		List<Double> values1 = new ArrayList<>();
+		values1.add(10.0);
+		List<Double> values2 = new ArrayList<>();
+		values1.add(12.0);
+		
+		sv1 = new SensorValue(sensor1, values1, ld);
+		sv2 = new SensorValue(sensor1, values2, ld.minusDays(1));
+		sv3 = new SensorValue(sensor2, values1, ld);
+		sv4 = new SensorValue(sensor2, values2, ld.minusDays(1));
+		sv5 = new SensorValue(sensor2, values1, ld.minusDays(2));
+		sv6 = new SensorValue(sensor2, values2, ld.minusDays(3));
 		
 		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4, sv5, sv6));
 		

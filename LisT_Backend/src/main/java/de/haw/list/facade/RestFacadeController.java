@@ -1,6 +1,5 @@
 package de.haw.list.facade;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,24 +49,24 @@ public class RestFacadeController {
 	}
 	
 	
-	/**
-	 * Fuegt neuen Sensorwert hinzu.
-	 * 
-	 * @param sensorId ID des Sensors
-	 * @param value Wert des Sensors
-	 * @return Sensorwert
-	 * @throws SensorNotFoundException 
-	 */
-	@RequestMapping(value = "/api/sensors/{id}/values", method = RequestMethod.POST)
-	public ResponseEntity<?> addSensorValue(@PathVariable("id") int sensorId, @RequestBody double value, @RequestBody LocalDateTime timestamp) throws SensorNotFoundException {
-		try {
-			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(sensorId, value, timestamp), HttpStatus.CREATED);
-		} catch (SensorNotFoundException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
+//	/**
+//	 * Fuegt neuen Sensorwert hinzu.
+//	 * 
+//	 * @param sensorId ID des Sensors
+//	 * @param value Wert des Sensors
+//	 * @return Sensorwert
+//	 * @throws SensorNotFoundException 
+//	 */
+//	@RequestMapping(value = "/api/sensors/{id}/values", method = RequestMethod.POST)
+//	public ResponseEntity<?> addSensorValue(@PathVariable("id") int sensorId, @RequestBody double value, @RequestBody LocalDateTime timestamp) throws SensorNotFoundException {
+//		try {
+//			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(sensorId, value, timestamp), HttpStatus.CREATED);
+//		} catch (SensorNotFoundException e) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//		}
+//	}
 
 	/**
 	 * Gibt Sensor zurueck.
@@ -108,7 +107,7 @@ public class RestFacadeController {
 	@RequestMapping(value="/api/sensors/{id}/values/latest", method= RequestMethod.GET)
 	public ResponseEntity<?> getLatestValueFromSensor(@PathVariable("id") Integer sensorId) throws SensorNotFoundException, NoValueAvailableException {
 		try {
-			return new ResponseEntity<Double>(sensorViewService.getLatestValueFromSensor(sensorId), HttpStatus.OK);
+			return new ResponseEntity<List<Double>>(sensorViewService.getLatestValueFromSensor(sensorId), HttpStatus.OK);
 //			return new ResponseEntity<SensorValue>(new SensorValue(new Sensor(), 10.0, LocalDateTime.now()), HttpStatus.OK);
 //			return new ResponseEntity<Double>(10.0, HttpStatus.OK);
 		} catch (SensorNotFoundException e) {
