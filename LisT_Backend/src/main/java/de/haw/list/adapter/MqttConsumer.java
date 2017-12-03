@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.haw.list.adapter;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
