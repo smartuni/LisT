@@ -1,6 +1,6 @@
 {
   "name": "list-gateway",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "LisT Gateway",
   "main": "",
   "scripts": {},
@@ -11,9 +11,10 @@
     "mqtt": "2.13.1",
     "mosca": "2.6.0",
     "q": "^1.5.1",
-    "console-log-level":"^1.4.0",
+    "console-log-level": "^1.4.0",
     "colors": "^1.1.2",
-    "jetty":"^0.2.1"
+    "jetty": "^0.2.1",
+    "minimist": "^1.2.0"
   },
   "directories": {},
   "optionalDependencies": {},
