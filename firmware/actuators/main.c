@@ -149,6 +149,7 @@ int main(void)
         //heating
         if(!heat){
             gpio_clear(GPIO_PIN(0,23));
+            
         }else{
             gpio_set(GPIO_PIN(0,23));
         }

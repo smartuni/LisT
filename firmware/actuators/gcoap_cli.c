@@ -71,6 +71,7 @@ uint8_t blue = 0;
 uint8_t heat = 0;
 phydat_t temp = { .val = {0}, .unit = 0, .scale = 0};
 
+
 /*
  * Response callback.
  */
