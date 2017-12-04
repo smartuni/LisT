@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.haw.list.sensorcomponent.util;
+package de.haw.mqttlistener.util;
 
 /**
  * Exception fuer falsch geformtes JSON.
