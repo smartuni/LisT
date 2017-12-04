@@ -39,6 +39,9 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 	private SensorValueRepository sensorValueRepo;
 	
 	@Autowired
+	private MqttConsumer mqttConsumer;
+	
+	@Autowired
 	private LogRepository logRepo;
 	
 	public static void main(String[] args) {
@@ -49,8 +52,9 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 	@Transactional
 	public void run(String... args) throws Exception {
 		
-//		sensorValueRepo.deleteAll();
-//		sensorRepo.deleteAll();
+		sensorValueRepo.deleteAll();
+		sensorRepo.deleteAll();
+		logRepo.deleteAll();
 		
 		Sensor sensor1 = new Sensor("s1", SensorType.TEMPERATURE, "TemperatureSensor", LocationType.INSIDE, 20, 15);
 		
@@ -60,21 +64,21 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 		sensorRepo.save(sensor2);
 		
-		List<Double> values1 = new ArrayList<>();
-		values1.add(10.0);
-		List<Double> values2 = new ArrayList<>();
-		values1.add(12.0);
-		List<Double> values3 = new ArrayList<>();
-		values1.add(13.0);
-		List<Double> values4 = new ArrayList<>();
-		values1.add(14.0);
+//		List<Double> values1 = new ArrayList<>();
+//		values1.add(10.0);
+//		List<Double> values2 = new ArrayList<>();
+//		values1.add(12.0);
+//		List<Double> values3 = new ArrayList<>();
+//		values1.add(13.0);
+//		List<Double> values4 = new ArrayList<>();
+//		values1.add(14.0);
 		
 		
-		SensorValue sv1 = new SensorValue(sensor1, values1, LocalDateTime.now());
+		SensorValue sv1 = new SensorValue(sensor1, 10.0, 0.0, 0.0, LocalDateTime.now());
 		
-		SensorValue sv2 = new SensorValue(sensor2, values2, LocalDateTime.now());
-		SensorValue sv3 = new SensorValue(sensor2, values3, LocalDateTime.now());
-		SensorValue sv4 = new SensorValue(sensor2, values4, LocalDateTime.now());
+		SensorValue sv2 = new SensorValue(sensor2, 12.0, 0.0, 0.0, LocalDateTime.now());
+		SensorValue sv3 = new SensorValue(sensor2, 13.0, 0.0, 0.0, LocalDateTime.now());
+		SensorValue sv4 = new SensorValue(sensor2, 14.0, 0.0, 0.0, LocalDateTime.now());
 		
 		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4));
 		
@@ -83,8 +87,9 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 		logRepo.save(Arrays.asList(log1, log2));
 		
-		MqttConsumer c = new MqttConsumer(logRepo);
-        c.consume();
+//		MqttConsumer c = new MqttConsumer(logRepo);
+//        c.consume();
+		mqttConsumer.consume();
 		
 		MemoryPersistence persistence = new MemoryPersistence();
 		

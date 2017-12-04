@@ -1,5 +1,6 @@
 package de.haw.list.sensorcomponent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,8 +61,12 @@ public class SensorViewServiceImpl implements SensorViewService {
 		if (!sensorValueOptional.isPresent()) {
 			throw new NoValueAvailableException(String.valueOf(sensorId));
 		}
-		
-		return sensorValueOptional.get().getValues();
+		List<Double> result = new ArrayList<>();
+		result.add(sensorValueOptional.get().getValue1());
+		result.add(sensorValueOptional.get().getValue2());
+		result.add(sensorValueOptional.get().getValue3());
+//		return sensorValueOptional.get().getValue1();
+		return result;
 		
 	}
 

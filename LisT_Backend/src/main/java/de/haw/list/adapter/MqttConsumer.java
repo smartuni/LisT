@@ -1,5 +1,8 @@
 package de.haw.list.adapter;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -10,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.haw.list.sensorcomponent.SensorPersistenceService;
 import de.haw.list.sensorcomponent.model.Log;
@@ -22,6 +26,7 @@ import de.haw.list.sensorcomponent.util.SensorNotFoundException;
  * @author Lydia Pflug
  * 20.11.2017
  */
+@Component
 public class MqttConsumer {
 	
 	private LogRepository logRepo;
@@ -37,13 +42,13 @@ public class MqttConsumer {
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
 
-    @Autowired 
     private SensorPersistenceService sensorPersistenceService; 
    
     
 	@Autowired
-	public MqttConsumer(LogRepository logRepo) {
+	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
 		this.logRepo = logRepo;
+		this.sensorPersistenceService = sensorPersistenceService;
 	}
 	
 	/**
@@ -63,6 +68,10 @@ public class MqttConsumer {
 
         public void connectionLost(Throwable cause) {
             System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", cause.getMessage());
+            StringWriter sw = new StringWriter();
+            cause.printStackTrace(new PrintWriter(sw));
+            String exceptionAsString = sw.toString();
+            System.out.printf(exceptionAsString);
             connected = false; //reconnect on exception
             System.out.println("Verbindung abgebrochen");
     		logRepo.save(new Log("Verbindung abgebrochen"));
@@ -107,13 +116,20 @@ public class MqttConsumer {
          
         try { 
           jsonObject = new JSONObject(message); 
-          logRepo.save(new Log("Konvertiert: " + message)); 
+          logRepo.save(new Log("Konvertiert: " + message));
+          logRepo.save(new Log("Json: " + jsonObject.toString()));
         } catch(JSONException e) { 
           logRepo.save(new Log(e.toString())); 
           throw new JsonMalFormedException(message); 
         } 
-         
-        sensorPersistenceService.addSensorValue(jsonObject); 
+        
+        try {
+        logRepo.save(new Log("ausserhalb des try-catch-Blockes"));
+        sensorPersistenceService.addSensorValue(jsonObject);
+        } catch(Exception e) {
+        	System.out.println("wir sind hier");
+        	e.printStackTrace();
+        }
          
       } 
 

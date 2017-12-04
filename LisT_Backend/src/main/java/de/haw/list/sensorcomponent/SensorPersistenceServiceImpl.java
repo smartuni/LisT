@@ -4,7 +4,9 @@
 package de.haw.list.sensorcomponent;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
+import de.haw.list.sensorcomponent.repo.LogRepository;
 import de.haw.list.sensorcomponent.repo.SensorRepository;
 import de.haw.list.sensorcomponent.repo.SensorValueRepository;
 import de.haw.list.sensorcomponent.util.JsonMalFormedException;
@@ -33,9 +37,12 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	
 	private SensorValueRepository sensorValueRepo;
 	
-	public SensorPersistenceServiceImpl(SensorRepository sensorRepo, SensorValueRepository sensorValueRepo) {
+	private LogRepository logRepo;
+	
+	public SensorPersistenceServiceImpl(SensorRepository sensorRepo, SensorValueRepository sensorValueRepo, LogRepository logRepo) {
 		this.sensorRepo = sensorRepo;
 		this.sensorValueRepo = sensorValueRepo;
+		this.logRepo = logRepo;
 	}
 	
 	@Override
@@ -49,17 +56,24 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	  @Override 
 	  public SensorValue addSensorValue(JSONObject jsonObject) throws SensorNotFoundException, JsonMalFormedException { 
 	 
+		logRepo.save(new Log("innerhalb des Services"));  
+		  
 	    Optional<Sensor> sensorOptional = null; 
 	    List<Double> values = new ArrayList<>(); 
-	    String timestamp = ""; 
+	    String timestamp = "";
+	    LocalDateTime dateTime = null;
+	    double value1 = 0.0;
 	 
 	    try { 
 	 
 	      String techId = (String) jsonObject.get("sensor"); 
 	 
 	      if (techId == null) { 
+	    	  logRepo.save(new Log("techId nicht heraus geparst")); 
 	        throw new JsonMalFormedException(jsonObject.toString()); 
 	      } 
+	      
+	      logRepo.save(new Log("techId: " + techId)); 
 	 
 	      // Erstmal nicht relevant, da mit techId bereits Sensor bestimmt werden kann 
 	      // String type = (String) jsonObject.get("type"); 
@@ -71,32 +85,61 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	      sensorOptional = sensorRepo.findByTechId(techId); 
 	 
 	      if (!sensorOptional.isPresent()) { 
+	    	  logRepo.save(new Log("sensor nicht gefunden")); 
 	        throw new SensorNotFoundException(String.valueOf(techId)); 
 	      } 
 	      
+	      logRepo.save(new Log("Sensor: " + sensorOptional.get().getName())); 
+	      
+	      
 	      JSONArray jsonArray = jsonObject.getJSONArray("value"); 
 	      
-	      if (jsonArray == null) { 
+	      if (jsonArray == null) {
+	    	  logRepo.save(new Log("Wertarray nicht gefunden")); 
 	        throw new JsonMalFormedException(jsonObject.toString()); 
 	      } 
 	 
-	      for (int i = 0; i < jsonArray.length(); i++) { 
-	        values.add(jsonArray.getJSONObject(i).getDouble("values")); 
+	      System.out.println(jsonArray.toString());
+	      
+	      // TODO in eine Stringliste speichern
+	      for (int i = 0; i < jsonArray.length(); i++) {
+	    	  System.out.println(jsonArray.getDouble(i));
+	    	  value1 = jsonArray.getDouble(i);
+//	        values.add(jsonArray.getDouble(i)/*.getJSONObject(i).getDouble("values")*/); 
 	      } 
+	      
+	      logRepo.save(new Log("Werte: " + Arrays.asList(values).toString())); 
+	      logRepo.save(new Log("Wert: " + (value1))); 
 	 
 	      timestamp = (String) jsonObject.get("timestamp"); 
 	 
 	      if (timestamp == null) { 
+	    	  logRepo.save(new Log("Timestamp nicht gefunden")); 
 	        throw new JsonMalFormedException(jsonObject.toString()); 
 	      } 
+	      
+	      logRepo.save(new Log("Timestamp: " + timestamp));
+	      
+	      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	      dateTime = LocalDateTime.parse(timestamp, formatter);
+	      
+	      logRepo.save(new Log("Timestamp als LocalDate: " + dateTime.toString()));
 	 
 	    } catch (JSONException e) { 
+	    	logRepo.save(new Log("irgendeine JSON Exception"));
+	    	logRepo.save(new Log(e.toString())); 
 	      throw new JsonMalFormedException(jsonObject.toString()); 
 	    } 
-	 
-	    SensorValue sensorValue = new SensorValue(sensorOptional.get(), values, LocalDateTime.parse(timestamp)); 
-	 
+	    
+	    logRepo.save(new Log("alles geparst"));
+	    
+	    SensorValue sensorValue = new SensorValue(sensorOptional.get(), value1, 0.0, 0.0, dateTime); 
+	    
+	    logRepo.save(new Log("fertig: " + sensorValue.toString()));
+	    
+	    logRepo.save(new Log("Value erzeugt")); 
 	    sensorValueRepo.save(sensorValue); 
+	    logRepo.save(new Log("Value gespeichert")); 
 	 
 	    return sensorValue; 
 	  } 
