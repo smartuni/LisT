@@ -40,6 +40,6 @@ dependencies {
 	runtime('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.json:json:20171018')
-	compile ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
 	
 }

@@ -76,18 +76,17 @@ public class SensorValueRepositoryTest {
 		
 		ld = LocalDateTime.now();
 		
-		values1 = new ArrayList<>();
-		values1.add(10.0);
-		values2 = new ArrayList<>();
-		values2.add(12.0);
+//		List<Double> values1 = new ArrayList<>();
+//		values1.add(10.0);
+//		List<Double> values2 = new ArrayList<>();
+//		values1.add(12.0);
 		
-		
-		sv1 = new SensorValue(sensor1, values1, ld);
-		sv2 = new SensorValue(sensor1, values2, ld.minusDays(1));
-		sv3 = new SensorValue(sensor2, values1, ld);
-		sv4 = new SensorValue(sensor2, values2, ld.minusDays(1));
-		sv5 = new SensorValue(sensor2, values1, ld.minusDays(2));
-		sv6 = new SensorValue(sensor2, values2, ld.minusDays(3));
+		sv1 = new SensorValue(sensor1, 10.0, 0.0, 0.0, ld);
+		sv2 = new SensorValue(sensor1, 12.0, 0.0, 0.0, ld.minusDays(1));
+		sv3 = new SensorValue(sensor2, 10.0, 0.0, 0.0, ld);
+		sv4 = new SensorValue(sensor2, 12.0, 0.0, 0.0, ld.minusDays(1));
+		sv5 = new SensorValue(sensor2, 10.0, 0.0, 0.0, ld.minusDays(2));
+		sv6 = new SensorValue(sensor2, 12.0, 0.0, 0.0,ld.minusDays(3));
 		
 		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4, sv5, sv6));
 		
