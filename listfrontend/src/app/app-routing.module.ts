@@ -3,19 +3,19 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 
 
-export const appRoutes: Routes = [
-    {path: 'home', component: AppComponent},
-    {path: 'statistics', component: StatisticsComponent},
-     {path: '', redirectTo: '/home', pathMatch: 'full'}
+export const routes: Routes = [
+  {path: '', redirectTo: '/home', pathMatch: 'full'},
+    {path: 'home', component: HomeComponent},
+    {path: 'statistics', component: StatisticsComponent}
 ];
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ],
   declarations: []
 })
 export class AppRoutingModule { }

@@ -1,18 +1,2 @@
 <bm-toolbar></bm-toolbar>
 <router-outlet></router-outlet>
-  
-  <h2>{{title2}}</h2>,
-  <h3>Fehler: {{errorMessage}}</h3>
-  <div *ngIf="loading">loading...</div>
-
-<ul class="sensors">
-  <li *ngFor="let sensor of sensors">
-      <span class="badge">{{sensor.id}}</span> {{sensor.name}}
-  </li>
-</ul>
-
-<ul class="values">
-  <li *ngFor="let value of values">
-      <span class="badge">{{value.id}}</span> {{value.value}}
-  </li>
-</ul>

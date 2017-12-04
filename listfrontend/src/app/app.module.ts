@@ -9,24 +9,25 @@ import { ValueService } from './value.service';
 import { StatisticsComponent } from './statistics/statistics.component';
 
 import { NgxLineChartModule } from 'ngx-line-chart';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
+    imports: [
+    BrowserModule,
+    HttpClientModule,
+    NgxLineChartModule,
+    AppRoutingModule
+  ],
   declarations: [
     AppComponent,
     StatisticsComponent,
     ToolbarComponent,
     HomeComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    NgxLineChartModule,
-    AppRoutingModule
-  ],
+
   providers: [
     SensorService,
     ValueService
