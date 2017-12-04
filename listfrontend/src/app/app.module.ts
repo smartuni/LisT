@@ -12,6 +12,7 @@ import { NgxLineChartModule } from 'ngx-line-chart';
 import { AppRoutingModule } from './app-routing.module';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { HomeComponent } from './home/home.component';
+import { OptionsComponent } from './options/options.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { HomeComponent } from './home/home.component';
     AppComponent,
     StatisticsComponent,
     ToolbarComponent,
-    HomeComponent
+    HomeComponent,
+    OptionsComponent
   ],
 
   providers: [

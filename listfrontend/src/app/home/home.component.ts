@@ -12,7 +12,7 @@ import { Values } from '../values';
 export class HomeComponent implements OnInit {
 
   title = 'LisT';
-  title2 = 'Livig in a smart Tank';
+  title2 = 'Living in a smart Tank';
 
   errorMessage = '----';
   data: any;
