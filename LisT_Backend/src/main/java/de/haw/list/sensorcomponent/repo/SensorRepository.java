@@ -19,4 +19,6 @@ public interface SensorRepository extends JpaRepository<Sensor, Integer> {
 	
 	public Optional<Sensor> findByTechId(String techId);
 
+	public Optional<Sensor> findByTechId(String techId);
+
 }

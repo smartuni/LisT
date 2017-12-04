@@ -34,6 +34,6 @@ public interface SensorPersistenceService {
 	 * @throws SensorNotFoundException 
 	 * @throws JsonMalFormedException 
 	 */
-	public SensorValue addSensorValue(JSONObject jsonObject) throws SensorNotFoundException, JsonMalFormedException;
-
+	 public SensorValue addSensorValue(JSONObject jsonObject) throws SensorNotFoundException, JsonMalFormedException; 
+	 
 }		
