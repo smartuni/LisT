@@ -12,7 +12,7 @@ export class SensorService {
 
   constructor(private http: HttpClient) { }
 
-  getSensors(): Observable<Sensors[]> {
-    return this.http.get(this.baseUrl + '/sensors');
+  getSensors(): Observable<any> {
+   return this.http.get(this.baseUrl + '/sensors');
   }
 }
