@@ -5,12 +5,13 @@ import { temp } from './temp';
 
 @Component({
   selector: 'bm-statistics',
-  templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css']
+templateUrl: './statistics.component.html'
+,
+    styleUrls: ['./statistics.component.css']
 })
 export class StatisticsComponent {
   temp: any[];
-  view: any[] = [700, 400];
+  tempView: any[] = [500, 300];
 
 
   showXAxis = true;
@@ -37,5 +38,6 @@ export class StatisticsComponent {
   }
 
 }
+
 
 export class AppModule {}

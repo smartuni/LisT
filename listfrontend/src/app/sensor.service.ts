@@ -8,11 +8,12 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class SensorService {
-  public baseUrl = 'http://localhost:4200/api';
+  public baseUrl = 'http://localhost:8181/api';
 
   constructor(private http: HttpClient) { }
 
-  getSensors(): Observable<Sensors[]> {
-    return this.http.get(this.baseUrl + '/sensors');
+  getSensors(): Observable<any> {
+   return this.http.get(this.baseUrl + '/sensors');
   }
 }
+
