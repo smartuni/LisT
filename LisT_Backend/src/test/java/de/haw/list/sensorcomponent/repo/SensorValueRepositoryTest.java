@@ -3,7 +3,6 @@ package de.haw.list.sensorcomponent.repo;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,9 +49,9 @@ public class SensorValueRepositoryTest {
 	
 	private LocalDateTime ld;
 	
-	private List<Double> values1;
-	private List<Double> values2;
-	private List<Double> values3;
+//	private List<Double> values1;
+//	private List<Double> values2;
+//	private List<Double> values3;
 	
 	@Autowired
 	private SensorValueRepository sensorValueRepo;
