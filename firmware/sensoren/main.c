@@ -27,7 +27,7 @@
 #include "kernel_types.h"
 
 // SAUL, drivers
-//#include "shell.h"
+#include "shell.h"
 #include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
@@ -59,11 +59,11 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
-/*
+
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
-};*/
+};
 
 
 
@@ -97,11 +97,11 @@ int main(void)
 	}
 
     /* start shell */
-    /*
+    
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-    */
+    
 
     xtimer_sleep(1);
     while(1){
@@ -137,7 +137,7 @@ int main(void)
         
         //rgbled_init(rgbled_t *led, pwm_t pwm, int channel_r, int channel_g, int channel_b);
         //rgbled_set(const rgbled_t *led, color_rgb_t *color);
-        xtimer_sleep(10);
+        xtimer_sleep(1);
     }
         	
     return 0;
