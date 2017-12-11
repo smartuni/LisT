@@ -13,7 +13,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
-import de.haw.list.adapter.MqttConsumer;
+//import de.haw.list.adapter.MqttConsumer;
 import de.haw.list.sensorcomponent.model.Log;
 import de.haw.list.sensorcomponent.model.Sensor;
 import de.haw.list.sensorcomponent.model.SensorValue;
@@ -33,8 +33,8 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 	@Autowired
 	private SensorValueRepository sensorValueRepo;
 	
-	@Autowired
-	private MqttConsumer mqttConsumer;
+//	@Autowired
+//	private MqttConsumer mqttConsumer;
 	
 	@Autowired
 	private LogRepository logRepo;
@@ -84,7 +84,7 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 //		MqttConsumer c = new MqttConsumer(logRepo);
 //        c.consume();
-		mqttConsumer.consume();
+		//mqttConsumer.consume();
 		
 //		MemoryPersistence persistence = new MemoryPersistence();
 		
