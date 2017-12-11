@@ -349,7 +349,8 @@ static ssize_t _riot_board_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len)
     return gcoap_finish(pdu, strlen(RIOT_BOARD), COAP_FORMAT_TEXT);
 }
 
-static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
+//static 
+size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
 {
     ipv6_addr_t addr;
     size_t bytes_sent;

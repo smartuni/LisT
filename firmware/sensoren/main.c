@@ -27,7 +27,7 @@
 #include "kernel_types.h"
 
 // SAUL, drivers
-#include "shell.h"
+//#include "shell.h"
 #include "saul.h"
 #include "saul_reg.h"
 #include "debug.h"
@@ -59,11 +59,11 @@ static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
 
-
+/*
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
-};
+};*/
 
 
 
@@ -97,14 +97,16 @@ int main(void)
 	}
 
     /* start shell */
-    
+    /*
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
-    
+    */
 
     xtimer_sleep(1);
     while(1){
+        
+        _send((uint8_t *)"TESTING", sizeof("TESTING"), "ff02::1", "5683");
         
        //xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
         puts("Test periodic wakeup");

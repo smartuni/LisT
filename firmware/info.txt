@@ -23,3 +23,14 @@ TODO: broadcast, what am I? #coap
 
 working on native:
 https://github.com/RIOT-OS/RIOT/tree/master/examples/gnrc_networking
+
+RIOT/sys/shell/commands/sc_netif.c
+-> getting the broadcast adress und direct ipv6 adress
+
+sniffer tool:
+https://github.com/RIOT-OS/applications/tree/master/sniffer/tools
+make list-ttys
+BOARD=samr21-xpro make clean all flash SERIAL=ATML2127031800002651
+./sniffer.py serial /dev/ttyACM1 115200 20 | wireshark -k -i -
+
+coap_reply_simple
