@@ -1,15 +1,10 @@
 package de.haw.list;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -91,13 +86,13 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 //        c.consume();
 		mqttConsumer.consume();
 		
-		MemoryPersistence persistence = new MemoryPersistence();
+//		MemoryPersistence persistence = new MemoryPersistence();
 		
 		
-		logRepo.save(new Log("Connection erstellt"));
+//		logRepo.save(new Log("Connection erstellt"));
 		
 		
-		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
+//		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
 
 
 		//		simpleMqttClient = new SimpleMqttClient();
