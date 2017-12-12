@@ -14,7 +14,10 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import de.haw.list.sensorcomponent.repo.LogRepository;
 import de.haw.mqttlistener.sensorcomponent.SensorPersistenceService;
 import de.haw.mqttlistener.util.JsonMalFormedException;
 
@@ -25,9 +28,11 @@ import de.haw.mqttlistener.util.JsonMalFormedException;
  * @author Lydia Pflug
  * 20.11.2017
  */
+@Component
 public class MqttConsumer {
 	
 	private SensorPersistenceService sensorPersistenceService;
+	private LogRepository logRepo;
 	private MqttClient client;
     private String server = "localhost";
     private String port = "1883";
@@ -37,7 +42,12 @@ public class MqttConsumer {
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
     
-    public MqttConsumer(SensorPersistenceService sensorPersistenceService) {
+    private SensorPersistenceService sensorPersistenceService; 
+    
+    
+    @Autowired
+	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
+		this.logRepo = logRepo;
 		this.sensorPersistenceService = sensorPersistenceService;
 	}
 	
