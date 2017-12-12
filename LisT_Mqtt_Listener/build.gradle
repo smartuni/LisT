@@ -28,32 +28,17 @@ repositories {
 	}
 }
 
-
 dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.json:json:20171018')
-	compile ('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
-	compile ('org.elasticsearch.client:elasticsearch-rest-client-sniffer:6.0.0')
-	
-}
-
-jar {
-    baseName = 'mqtt'
-    manifest {
-        attributes 'Main-Class': 'de.haw.mqttlistener.MqttListenerApp'
-    }
-}
-
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Main-Class': 'de.haw.mqttlistener.MqttListenerApp'
-    }
-    baseName = jar.baseName
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
+	compile('org.elasticsearch.client:elasticsearch-rest-client-sniffer:6.0.0')
+	compile('mysql:mysql-connector-java:6.0.6')
+	runtime('mysql:mysql-connector-java')
 }
 
 task wrapper(type: Wrapper) {

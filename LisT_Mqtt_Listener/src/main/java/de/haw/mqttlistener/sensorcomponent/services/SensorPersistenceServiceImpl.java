@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.haw.mqttlistener.sensorcomponent;
+package de.haw.mqttlistener.sensorcomponent.services;
 
 import java.io.IOException;
 import java.io.OutputStream;
