@@ -1,4 +1,3 @@
-
 //############ Run Parameters ##########################################################################################
 
 var argv = require('minimist')(process.argv.slice(2));
@@ -55,7 +54,7 @@ var Frontend = {
     url: 'mqtt://141.22.28.86',
     port: '1883',
     subscribeTopic: 'actor',
-    publishTopic: 'test',
+    publishTopic: 'sensor',
     status: 'disconnected',
     connect: function () {
         Frontend.client = mqtt.connect(Frontend.url, {
@@ -72,7 +71,7 @@ var sensorNodes = [{
             typ: "GET",
 
         }, {
-            path: "/light",
+            path: "/light/rgb",
             typ: "GET",
 
         }],
@@ -88,8 +87,8 @@ var sensorNodes = [{
 
 
 var sensorNodeOne = {
-    //hostname: "fe80::68c0:6d50:52ae:432a%lowpan0",
-    hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
+    hostname: "ff02::1",
+    //hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
     temperaturePath: "/temp",
     surfaceTemp: "0",
     ambientTemp: "0",
@@ -105,7 +104,7 @@ var sensorNodeOne = {
 };
 
 var sensorNodeTwo = {
-    hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
+    hostname: "fe80::7b79:4946:539e:75e%lowpan0",
     lampPaths: {
         red: "/red",
         green: "/green",
@@ -120,18 +119,11 @@ var sensorNodeTwo = {
 };
 
 var data = {
-    node_1: {
-        temperature: "0",
-        light: {
-            red: "0",
-            green: "0",
-            blue: "0"
-        },
-        ph: "0"
-    },
-    node_2: {
-        lampStatus: "0"
-    }
+    sensor: 's1',
+    typ: 'temp',
+    value: [],
+    timestamp: '',
+
 };
 
 var communicationStatus = {
@@ -157,7 +149,7 @@ Frontend.connect();
 Frontend.client.on('connect', function () {
     Frontend.status = 'connected';
     Frontend.client.subscribe(Frontend.subscribeTopic);
-    //log.debug(colors.info("Frontend connected and subscribed to: " + Frontend.subscribeTopic));
+    log.debug("Frontend connected and subscribed to: " + Frontend.subscribeTopic);
 });
 
 Frontend.client.on('reconnect', function () {
@@ -180,8 +172,39 @@ Frontend.client.on('message', function (topic, message) {
 });
 
 
-console.log(data);
+//console.log(data);
 console.log(communicationStatus);
+
+
+/*
+*
+*########### COAP SERVER ###########################################################################################
+*
+*/
+var coap = require('coap');
+
+
+var server = coap.createServer({
+    type:'udp6',
+    //multicast: true,
+    multicastAddress: 'ff02::1'
+});
+
+
+// Create servers
+server.listen(5683, function () {
+    console.log('Server 1 is listening')
+});
+
+
+
+server.on('request', function (msg, res) {
+    console.log('Server 1 has received message' + msg);
+    res.end('Ok');
+
+    //server.close();
+});
+
 
 
 /*
@@ -189,25 +212,31 @@ console.log(communicationStatus);
 *########### START INTERVAL ###########################################################################################
 *
 */
-
+/*
 var productionInterval = setInterval(function () {
 
     updateFromSensors()
 
         .then(function () {
-            log.debug(colors.info("Sensor Update successful"));
+            log.debug("Sensor Update successful");
 
             return calculate();
         })
 
         .then(function () {
-            log.debug(colors.info("Calculation successful"));
+            log.debug("Calculation successful");
 
             return forwardToFrontend();
         })
 
+        .then(function () {
+            log.debug("Calculation successful");
+
+            return updateToActors();
+        })
+
         .catch(function (error) {
-            log.debug(colors.error("Production interval faild with error: " + error));
+            log.debug("Production interval faild with error: " + error);
         });
 
 }.bind(this), 5000);
@@ -221,7 +250,7 @@ if (logLevel === 'info') {
     }, 1000);
 
 }
-
+/*
 
 /*
 *
@@ -233,6 +262,15 @@ function forwardToFrontend() {
     return new Promise(function (resolve, reject) {
         if (Frontend.status === "connected") {
 
+            let d = new Date();
+
+            data.timestamp = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+            // YYYY-MM-DD HH:MM
+
+
+            data.value.length = 0;
+            data.value.push(Math.floor(Math.random() * 30) + 10);
+
             Frontend.client.publish(Frontend.publishTopic, JSON.stringify(data), function (error) {
 
                 if (error) {
@@ -242,7 +280,6 @@ function forwardToFrontend() {
 
                     log.debug("Data: " + JSON.stringify(data), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
                     resolve();
-
                 }
 
             });
@@ -280,9 +317,12 @@ function calculate() {
 
     return new Promise(function (resolve, reject) {
 
-        data.temperature = sensorNodeOne.surfaceTemp;
-        data.light = sensorNodeOne.lightValue;
+        //data.temperature = sensorNodeOne.surfaceTemp;
+        //data.light = sensorNodeOne.lightValue;
 
+        //sensorNodeTwo.lampValue = sensorNodeOne.lightValue;
+        data.value.length = 0;
+        data.value.push(sensorNodeOne.surfaceTemp);
 
         if (sensorNodeOne.lightValue.red.toString() < 600) {
             sensorNodeTwo.lampValue.red = 255;
@@ -306,55 +346,92 @@ function calculate() {
 function updateFromSensors() {
 
     log.debug('Initialize COAP Request');
+//
+//     //var promise = coapRequest(sensorNodeOne.hostname, "/temp", 'GET')
+//     var promise = coapRequest(sensorNodeTwo.hostname, "/.well-known/core", 'GET')
+//
+//         .then(function (data) {
+//             console.log(data);
+//             // let jsonData = JSON.parse(data);
+//             // sensorNodeOne.ambientTemp = JSON.stringify(jsonData.ambientTemp).slice(0, 2) + "." + JSON.stringify(jsonData.ambientTemp).slice(2, 4);
+//             // sensorNodeOne.surfaceTemp = JSON.stringify(jsonData.surfaceTemp).slice(0, 2) + "." + JSON.stringify(jsonData.surfaceTemp).slice(2, 4);
+//             // sensorNodeOne.message = jsonData.message;
+//             //
+//             // log.debug('GET RESULT: ' + JSON.stringify(sensorNodeOne));
+//
+//             return coapRequest(sensorNodeOne.hostname, "/light/rgb", 'GET')
+//         })
+//         //
+//         // // .then(function (data) {
+//         // //     console.log(data);
+//         // //
+//         // //     console.log("#######-> " + data.blue);
+//         // //     console.log(JSON.stringify(data));
+//         // //
+//         // //
+//         // // })
+//         //
+//         // .then(function (data) {
+//         //
+//         //     //sensorNodeOne.lightValue = data;
+//         //
+//         //     log.debug(data);
+//         //
+//         //
+//         //     return coapRequest(sensorNodeOne.hostname, "/status", 'GET');
+//         //
+//         //
+//         // })
+//
+//         .then(function (data) {
+//             let tmp = JSON.parse(data);
+//
+//             if (tmp.message === "ok") {
+//                 sensorNodeOne.lightValue.red = tmp.red;
+//                 sensorNodeOne.lightValue.green = tmp.green;
+//                 sensorNodeOne.lightValue.blue = tmp.blue;
+//             }
+//
+//             //log.debug("GET AUF STATUS " + JSON.stringify(JSON.parse(data)));
+//             log.debug("GET auf " + sensorNodeOne.hostname + " Result: " + JSON.stringify(tmp));
+//
+//         })
+//
+//
+//         .catch(function (error) {
+//             log.debug("SENSOR READ failed with error: " + error);
+//         });
+//
+//     return promise;
+ }
 
-    var promise = coapRequest(sensorNodeOne.hostname, "/status", 'GET')
+/*
+*
+*
+*
+*/
 
-    // .then(function (data) {
-    //     let jsonData = JSON.parse(data);
-    //     sensorNodeOne.ambientTemp = JSON.stringify(jsonData.ambientTemp).slice(0, 2) + "." + JSON.stringify(jsonData.ambientTemp).slice(2, 4);
-    //     sensorNodeOne.surfaceTemp = JSON.stringify(jsonData.surfaceTemp).slice(0, 2) + "." + JSON.stringify(jsonData.surfaceTemp).slice(2, 4);
-    //     sensorNodeOne.message = jsonData.message;
-    //
-    //     log.debug('GET RESULT: ' + JSON.stringify(sensorNodeOne));
-    //
-    //     return coapRequest(sensorNodeOne.hostname, sensorNodeOne.lightPath, 'GET');
-    // })
-    //
-    // // .then(function (data) {
-    // //     console.log(data);
-    // //
-    // //     console.log("#######-> " + data.blue);
-    // //     console.log(JSON.stringify(data));
-    // //
-    // //
-    // // })
-    //
-    // .then(function (data) {
-    //
-    //     //sensorNodeOne.lightValue = data;
-    //
-    //     log.debug(data);
-    //
-    //
-    //     return coapRequest(sensorNodeOne.hostname, "/status", 'GET');
-    //
-    //
-    // })
+function updateToActors() {
 
-        .then(function (data) {
+    var promise = coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.red, 'PUT', sensorNodeTwo.lampValue.red.toString())
 
-
-            console.log("test");
-
-            log.debug("GET AUF STATUS " + JSON.stringify(JSON.parse(data)));
-
-
+        .then(function () {
+            return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.green, 'PUT', sensorNodeTwo.lampValue.green.toString())
         })
 
+        .then(function () {
+            return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.blue, 'PUT', sensorNodeTwo.lampValue.blue.toString())
+        })
+
+        .then(function () {
+            return coapRequest(sensorNodeTwo.hostname, '/temp', 'PUT', sensorNodeOne.surfaceTemp)
+        })
 
         .catch(function (error) {
-            log.debug("SENSOR READ failed with error: " + error);
+            log.debug("ACTOR PUT failed with error: " + error);
         });
+
+    log.debug("Actor Put succsessfull");
 
     return promise;
 }
@@ -363,12 +440,14 @@ function updateFromSensors() {
 *
 *
 *
-*/
+*
+ */
+
+
 function coapRequest(hostname, path, method, payload) {
 
     return new Promise(function (resolve, reject) {
 
-        var coap = require('coap');
 
         var servicesRequest = coap.request({
             hostname: hostname,
