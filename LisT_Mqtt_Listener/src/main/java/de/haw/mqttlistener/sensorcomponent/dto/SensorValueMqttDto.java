@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.haw.mqttlistener.dto;
+package de.haw.mqttlistener.sensorcomponent.dto;
 
 import java.util.List;
 

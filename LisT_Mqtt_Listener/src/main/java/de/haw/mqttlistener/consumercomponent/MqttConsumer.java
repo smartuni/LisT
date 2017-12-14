@@ -14,8 +14,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import de.haw.mqttlistener.sensorcomponent.SensorPersistenceService;
+import de.haw.mqttlistener.sensorcomponent.model.Log;
+import de.haw.mqttlistener.sensorcomponent.repo.LogRepository;
+import de.haw.mqttlistener.sensorcomponent.services.SensorPersistenceService;
 import de.haw.mqttlistener.util.JsonMalFormedException;
 
 
@@ -25,9 +29,11 @@ import de.haw.mqttlistener.util.JsonMalFormedException;
  * @author Lydia Pflug
  * 20.11.2017
  */
+@Component
 public class MqttConsumer {
 	
 	private SensorPersistenceService sensorPersistenceService;
+	private LogRepository logRepo;
 	private MqttClient client;
     private String server = "localhost";
     private String port = "1883";
@@ -37,7 +43,10 @@ public class MqttConsumer {
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
     
-    public MqttConsumer(SensorPersistenceService sensorPersistenceService) {
+    
+    @Autowired
+	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
+		this.logRepo = logRepo;
 		this.sensorPersistenceService = sensorPersistenceService;
 	}
 	
@@ -54,6 +63,7 @@ public class MqttConsumer {
     		
     		System.out.println("Topic: " + topic + ", Message: " + (new String(message.getPayload())));
             System.out.println("Hilfe!!!");
+            logRepo.save(new Log(topic + "/" + message.toString()));
     		persistMessage(message.toString());
         }
 
@@ -62,6 +72,7 @@ public class MqttConsumer {
             System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", cause.getMessage());
             connected = false; //reconnect on exception
             System.out.println("Verbindung abgebrochen");
+            logRepo.save(new Log("Verbindung abgebrochen"));
         }
 
     	@Override
@@ -102,8 +113,11 @@ public class MqttConsumer {
     	
     	try {
     		jsonObject = new JSONObject(message);
+    		logRepo.save(new Log("Konvertiert: " + message));
+            logRepo.save(new Log("Json: " + jsonObject.toString()));
     	} catch(JSONException e) {
     		e.printStackTrace();
+    		logRepo.save(new Log(e.toString())); 
     		throw new JsonMalFormedException(message);
     	}
     	
