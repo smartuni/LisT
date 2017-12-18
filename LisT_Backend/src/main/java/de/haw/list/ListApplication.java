@@ -33,9 +33,6 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 	@Autowired
 	private SensorValueRepository sensorValueRepo;
 	
-//	@Autowired
-//	private MqttConsumer mqttConsumer;
-	
 	@Autowired
 	private LogRepository logRepo;
 	
