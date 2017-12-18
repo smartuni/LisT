@@ -156,7 +156,9 @@ public class MqttConsumer {
     		throw new JsonMalFormedException(message);
     	}
     	
-    	HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject, getHeader());
+//    	HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject, getHeader());
+    	HttpEntity<String> httpEntity = new HttpEntity<String>(message, getHeader());
+    	
     	
     	System.out.println("ausserhalb des try catch Blockes");
     	ResponseEntity<?> response = restClient.exchange("http://141.22.28.86:80/api/sensors/values", HttpMethod.POST, httpEntity, ResponseEntity.class);
