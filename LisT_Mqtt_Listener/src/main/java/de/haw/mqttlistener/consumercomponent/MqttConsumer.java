@@ -14,12 +14,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
-import de.haw.mqttlistener.sensorcomponent.model.Log;
-import de.haw.mqttlistener.sensorcomponent.repo.LogRepository;
-import de.haw.mqttlistener.sensorcomponent.services.SensorPersistenceService;
 import de.haw.mqttlistener.util.JsonMalFormedException;
 
 
@@ -29,11 +30,8 @@ import de.haw.mqttlistener.util.JsonMalFormedException;
  * @author Lydia Pflug
  * 20.11.2017
  */
-@Component
 public class MqttConsumer {
 	
-	private SensorPersistenceService sensorPersistenceService;
-	private LogRepository logRepo;
 	private MqttClient client;
     private String server = "localhost";
     private String port = "1883";
@@ -42,13 +40,14 @@ public class MqttConsumer {
     private String clientId = MqttClient.generateClientId();
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
+    private RestTemplate restClient;
     
     
-    @Autowired
-	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
-		this.logRepo = logRepo;
-		this.sensorPersistenceService = sensorPersistenceService;
-	}
+    public MqttConsumer() {
+    	restClient = new RestTemplate();
+    	
+    	
+    }
 	
 	/**
      * This method is the overridden callback on receiving messages.
@@ -62,9 +61,7 @@ public class MqttConsumer {
         public void messageArrived(String topic, MqttMessage message) throws JsonMalFormedException, ProtocolException, UnsupportedEncodingException, MalformedURLException, IOException {     
     		
     		System.out.println("Topic: " + topic + ", Message: " + (new String(message.getPayload())));
-            System.out.println("Hilfe!!!");
-            logRepo.save(new Log(topic + "/" + message.toString()));
-    		persistMessage(message.toString());
+            sendSensorValue(message.toString());
         }
 
     	@Override
@@ -72,7 +69,6 @@ public class MqttConsumer {
             System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", cause.getMessage());
             connected = false; //reconnect on exception
             System.out.println("Verbindung abgebrochen");
-            logRepo.save(new Log("Verbindung abgebrochen"));
         }
 
     	@Override
@@ -107,23 +103,34 @@ public class MqttConsumer {
         }
     }
     
-    private void persistMessage(String message) throws JsonMalFormedException, ProtocolException, UnsupportedEncodingException, MalformedURLException, IOException {
-    	
+    private void sendSensorValue(String message) throws JsonMalFormedException {
+
     	JSONObject jsonObject = null;
     	
     	try {
     		jsonObject = new JSONObject(message);
-    		logRepo.save(new Log("Konvertiert: " + message));
-            logRepo.save(new Log("Json: " + jsonObject.toString()));
+    		System.out.println("Konvertiert: " + message);
+    		System.out.println("Json: " + jsonObject.toString());
     	} catch(JSONException e) {
     		e.printStackTrace();
-    		logRepo.save(new Log(e.toString())); 
     		throw new JsonMalFormedException(message);
     	}
     	
-    	sensorPersistenceService.addSensorValue(jsonObject);
+    	HttpEntity<String> httpEntity = new HttpEntity<String>(message, getHeader());
     	
+    	
+    	System.out.println("ausserhalb des try catch Blockes");
+    	ResponseEntity<?> response = restClient.exchange("http://141.22.28.86:80/api/sensors/values", HttpMethod.POST, httpEntity, ResponseEntity.class);
+    	System.out.println("Response: " + response.toString());
+    	System.out.println("an Rest-Facade geschickt");
     }
+    
+    private static HttpHeaders getHeader() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return headers;
+	}
+
 	
 
 }
