@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
+// import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import { AppComponent } from './app.component';
@@ -22,7 +22,7 @@ import { OptionsComponent } from './options/options.component';
     HttpClientModule,
     NgxChartsModule,
     AppRoutingModule,
-    FlexLayoutModule
+    // FlexLayoutModule
   ],
   declarations: [
     AppComponent,
