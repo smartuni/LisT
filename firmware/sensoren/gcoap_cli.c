@@ -28,6 +28,8 @@
 #include "fmt.h"
 #include "phydat.h"
 
+#include "random.h"
+
 #include "gcoap_cli.h"
 
 #define ENABLE_DEBUG (0)
@@ -75,6 +77,9 @@ uint16_t req_count2 = 0;
 //data variables
 phydat_t temp = { .val = {0}, .unit = 0, .scale = 0};
 phydat_t light = { .val = {0}, .unit = 0, .scale = 0};
+
+char msg_temp[10] = "ok";
+char msg_light[10] = "ok";
 
 /*
  * Response callback.
@@ -167,6 +172,9 @@ static ssize_t _status_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
     char output[200] = "";
     char ch[1] = "/";
     signed int check = 0;
+    
+    uint32_t rand_number = random_uint32_range(500000, 5000000); //get random number between 0.5s and 5s
+    xtimer_usleep(rand_number);
     
     switch(method_flag) {
         case COAP_GET:
@@ -264,7 +272,9 @@ static ssize_t _temp_amb_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
             //NOTE: signed value for data
             //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
             
-            size_t payload_len = sprintf((char *)pdu->payload, "{\"ambientTemp\": %d, \"message\": \"ok\"}", temp.val[1]);
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"ambientTemp\": %d, \"message\": \"%s\"}", temp.val[1], msg_temp);
+            
+            printf("test\n");
             
 
             return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
@@ -286,7 +296,7 @@ static ssize_t _temp_sur_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
             //NOTE: signed value for data
             //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
             
-            size_t payload_len = sprintf((char *)pdu->payload, "{\"surfaceTemp\": %d, \"message\": \"ok\"}", temp.val[0]);
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"surfaceTemp\": %d, \"message\": \"%s\"}", temp.val[0], msg_temp);
 
             return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
 
@@ -330,7 +340,7 @@ static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
             //NOTE: signed value for data
             //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
             
-            size_t payload_len = sprintf((char *)pdu->payload, "{\"red\": %d, \"green\": %d, \"blue\": %d, \"message\": \"ok\"}", light.val[0], light.val[1], light.val[2]);
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"red\": %d, \"green\": %d, \"blue\": %d, \"message\": \"%s\"}", light.val[0], light.val[1], light.val[2], msg_light);
 
             //memcpy(pdu->payload, light.val, sizeof(light.val));
 

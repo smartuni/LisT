@@ -34,3 +34,15 @@ BOARD=samr21-xpro make clean all flash SERIAL=ATML2127031800002651
 ./sniffer.py serial /dev/ttyACM1 115200 20 | wireshark -k -i -
 
 coap_reply_simple
+
+
+2017-12-18 09:43:11,811 - INFO #  ifconfig
+2017-12-18 09:43:11,815 - INFO # Iface  7   HWaddr: 03:22  Channel: 20  NID: 0x23
+2017-12-18 09:43:11,820 - INFO #            Long HWaddr: a9:c0:6e:7a:74:27:03:22 
+2017-12-18 09:43:11,823 - INFO #            TX-Power: 0dBm  State: IDLE 
+2017-12-18 09:43:11,829 - INFO #            ACK_REQ  AUTOCCA  MTU:1280  HL:64  6LO  RTR  IPHC  
+2017-12-18 09:43:11,832 - INFO #            Source address length: 8
+2017-12-18 09:43:11,835 - INFO #            Link type: wireless
+2017-12-18 09:43:11,840 - INFO #            inet6 addr: ff02::1/128  scope: local [multicast]
+2017-12-18 09:43:11,845 - INFO #            inet6 addr: fe80::abc0:6e7a:7427:322/64  scope: local
+2017-12-18 09:43:11,852 - INFO #            inet6 addr: ff02::1:ff27:322/128  scope: local [multicast]
