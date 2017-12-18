@@ -25,9 +25,7 @@ public class SensorValue {
 	@GeneratedValue
 	private int id;
 	
-	@ManyToOne//(cascade = CascadeType.ALL)
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonIdentityReference(alwaysAsId = true)
+	@ManyToOne
 	private Sensor sensor;
 	
 	private double value1;
