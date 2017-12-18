@@ -85,6 +85,7 @@ public class RestFacadeController {
 	@RequestMapping(value = "/api/sensors/values", method = RequestMethod.POST)
 	public ResponseEntity<?> addSensorValue(@RequestBody String value) throws SensorNotFoundException {
 		try {
+			System.out.println("Restfacade erreicht");
 			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(new JSONObject(value)), HttpStatus.CREATED);
 		} catch (SensorNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
