@@ -8,13 +8,13 @@ import { StatisticsComponent } from './statistics/statistics.component';
 
 
 export const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
     {path: 'home', component: HomeComponent},
     {path: 'statistics', component: StatisticsComponent}
 ];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes) ],
+  imports: [ RouterModule.forRoot(routes)],
   exports: [ RouterModule ],
   declarations: []
 })
