@@ -1,22 +1,26 @@
-//############ Run Parameters ##########################################################################################
+/*
+*
+* ############ Run Parameters ##########################################################################################
+*
+ */
 
 var argv = require('minimist')(process.argv.slice(2));
 
 if (argv.help) {
-
     console.log("Parameter description:");
-    console.log("");
-    console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
-    console.log("");
-    console.log("--logLevel             debug , info ");
-    console.log("");
-    console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
-
+    console.log("Option                         Description");
+    console.log("--mqttAddress                  Something like mqtt://141.22.28.86 ");
+    // console.log("");
+    console.log("--logLevel                     DEFAULT:    debug ");
+    console.log("                               OPTIONS:    debug, info ");
+    // console.log("");
+    console.log("--coapInterface                DEFAULT:    lowpan0");
+    // console.log("");
+    console.log("--coapMulticastAddress         DEFAULT:    ff02::1");
+    // console.log("");
+    console.log("--coapPort                     DEFAULT:    5873");
     process.exit(0);
 }
-
-
-//var logLevel = 'debug';
 
 //# Parameter ##### exists? ######### copy #### default ##
 var logLevel = (argv.logLevel ? argv.logLevel : 'debug');
@@ -50,6 +54,14 @@ var Jetty = require("jetty");
 * #### Connection Config ###############################################################################################
 *
 */
+var coapConfig = {
+    multicastAddress: "ff02::1",
+    port: 5873,
+    interface: "lowpan0",
+    discoveryPfad: "/status"
+};
+
+
 var Frontend = {
     url: 'mqtt://141.22.28.86',
     port: '1883',
@@ -63,7 +75,7 @@ var Frontend = {
     }
 };
 
-var sensorNodes = [{
+var coapNodes = [{
     hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
     supportedPaths: [
         {
@@ -87,7 +99,7 @@ var sensorNodes = [{
 
 
 var sensorNodeOne = {
-    hostname: "ff02::1",
+    hostname: "ff02::1%lowpan0",
     //hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
     temperaturePath: "/temp",
     surfaceTemp: "0",
@@ -142,7 +154,7 @@ var communicationStatus = {
 */
 var jetty = new Jetty(process.stdout);
 
-jetty.clear();
+// jetty.clear();
 
 Frontend.connect();
 
@@ -184,54 +196,29 @@ console.log(communicationStatus);
 var coap = require('coap');
 
 
-var server = coap.createServer({
-    type:'udp6',
-    //multicast: true,
-    multicastAddress: 'ff02::1'
-});
-
-
-// Create servers
-server.listen(5683, function () {
-    console.log('Server 1 is listening')
-});
-
-
-
-server.on('request', function (msg, res) {
-    console.log('Server 1 has received message' + msg);
-    res.end('Ok');
-
-    //server.close();
-});
-
-
-
 /*
 *
 *########### START INTERVAL ###########################################################################################
 *
 */
-/*
+
+
 var productionInterval = setInterval(function () {
 
     updateFromSensors()
 
         .then(function () {
             log.debug("Sensor Update successful");
-
             return calculate();
         })
 
         .then(function () {
             log.debug("Calculation successful");
-
             return forwardToFrontend();
         })
 
         .then(function () {
             log.debug("Calculation successful");
-
             return updateToActors();
         })
 
@@ -250,7 +237,7 @@ if (logLevel === 'info') {
     }, 1000);
 
 }
-/*
+
 
 /*
 *
@@ -277,7 +264,6 @@ function forwardToFrontend() {
                     reject(error)
 
                 } else {
-
                     log.debug("Data: " + JSON.stringify(data), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
                     resolve();
                 }
@@ -297,14 +283,70 @@ function forwardToFrontend() {
 *
 *
 */
-function coapDiscovery() {
+function coapDiscovery(update) {
 
     return new Promise(function (resolve, reject) {
 
 
-        reject();
-        resolve();
-    });
+            //TODO Add Latest update based cleanup here
+            if (!update) {
+                coapNodes.length = 0;
+            }
+
+
+            let servicesRequest = coap.request({
+                hostname: coapConfig.multicastAddress,
+                pathname: coapConfig.discoveryPfad,
+                method: 'GET',
+                multicast: true,
+                multicastTimeout: 2000
+            });
+
+
+            servicesRequest.on('response', function (servicesResponse) {
+                servicesResponse.on('error', function (error) {
+                    log.error(error);
+                    reject(error);
+                });
+
+
+                var addNode = true;
+                coapNodes.forEach(function (node) {
+                    if (node.hostname === servicesResponse.rsinfo.address) {
+                        log.debug("Node (" + servicesResponse.rsinfo.address + ") already in Node Array");
+                        addNode = false;
+                    }
+                });
+
+                if (addNode) {
+                    coapNodes.push({
+                        hostname: servicesResponse.rsinfo.address,
+                        supportedPaths: [
+                            {
+                                path: "/temp",
+                                typ: "GET",
+                            }, {
+                                path: "/light/rgb",
+                                typ: "GET",
+                            }],
+                    },)
+                }
+
+                //let tmp = servicesResponse.payload.toString();
+                console.log("########################################");
+                console.log("########################################");
+                console.log(servicesResponse.rsinfo);
+                console.log(servicesResponse.payload.toString());
+                console.log("########################################");
+                console.log("########################################");
+                //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
+                resolve("ok");
+                // resolve(tmp)
+            });
+
+            servicesRequest.end();
+        }
+    );
 }
 
 
@@ -346,64 +388,65 @@ function calculate() {
 function updateFromSensors() {
 
     log.debug('Initialize COAP Request');
-//
-//     //var promise = coapRequest(sensorNodeOne.hostname, "/temp", 'GET')
-//     var promise = coapRequest(sensorNodeTwo.hostname, "/.well-known/core", 'GET')
-//
-//         .then(function (data) {
-//             console.log(data);
-//             // let jsonData = JSON.parse(data);
-//             // sensorNodeOne.ambientTemp = JSON.stringify(jsonData.ambientTemp).slice(0, 2) + "." + JSON.stringify(jsonData.ambientTemp).slice(2, 4);
-//             // sensorNodeOne.surfaceTemp = JSON.stringify(jsonData.surfaceTemp).slice(0, 2) + "." + JSON.stringify(jsonData.surfaceTemp).slice(2, 4);
-//             // sensorNodeOne.message = jsonData.message;
-//             //
-//             // log.debug('GET RESULT: ' + JSON.stringify(sensorNodeOne));
-//
-//             return coapRequest(sensorNodeOne.hostname, "/light/rgb", 'GET')
-//         })
-//         //
-//         // // .then(function (data) {
-//         // //     console.log(data);
-//         // //
-//         // //     console.log("#######-> " + data.blue);
-//         // //     console.log(JSON.stringify(data));
-//         // //
-//         // //
-//         // // })
-//         //
-//         // .then(function (data) {
-//         //
-//         //     //sensorNodeOne.lightValue = data;
-//         //
-//         //     log.debug(data);
-//         //
-//         //
-//         //     return coapRequest(sensorNodeOne.hostname, "/status", 'GET');
-//         //
-//         //
-//         // })
-//
-//         .then(function (data) {
-//             let tmp = JSON.parse(data);
-//
-//             if (tmp.message === "ok") {
-//                 sensorNodeOne.lightValue.red = tmp.red;
-//                 sensorNodeOne.lightValue.green = tmp.green;
-//                 sensorNodeOne.lightValue.blue = tmp.blue;
-//             }
-//
-//             //log.debug("GET AUF STATUS " + JSON.stringify(JSON.parse(data)));
-//             log.debug("GET auf " + sensorNodeOne.hostname + " Result: " + JSON.stringify(tmp));
-//
-//         })
-//
-//
-//         .catch(function (error) {
-//             log.debug("SENSOR READ failed with error: " + error);
-//         });
-//
-//     return promise;
- }
+
+    var promise = coapRequest(sensorNodeOne.hostname, "/light", 'GET')
+    // var promise = coapRequest(sensorNodeOne.hostname, "/temp", 'GET')
+    //     var promise = coapRequest(sensorNodeTwo.hostname, "/.well-known/core", 'GET')
+
+        .then(function (data) {
+            console.log(data);
+            //             // let jsonData = JSON.parse(data);
+            //             // sensorNodeOne.ambientTemp = JSON.stringify(jsonData.ambientTemp).slice(0, 2) + "." + JSON.stringify(jsonData.ambientTemp).slice(2, 4);
+            //             // sensorNodeOne.surfaceTemp = JSON.stringify(jsonData.surfaceTemp).slice(0, 2) + "." + JSON.stringify(jsonData.surfaceTemp).slice(2, 4);
+            //             // sensorNodeOne.message = jsonData.message;
+            //             //
+            //             // log.debug('GET RESULT: ' + JSON.stringify(sensorNodeOne));
+            //
+            //             return coapRequest(sensorNodeOne.hostname, "/light/rgb", 'GET')
+        })
+        //         //
+        //         // // .then(function (data) {
+        //         // //     console.log(data);
+        //         // //
+        //         // //     console.log("#######-> " + data.blue);
+        //         // //     console.log(JSON.stringify(data));
+        //         // //
+        //         // //
+        //         // // })
+        //         //
+        //         // .then(function (data) {
+        //         //
+        //         //     //sensorNodeOne.lightValue = data;
+        //         //
+        //         //     log.debug(data);
+        //         //
+        //         //
+        //         //     return coapRequest(sensorNodeOne.hostname, "/status", 'GET');
+        //         //
+        //         //
+        //         // })
+        //
+        //         .then(function (data) {
+        //             let tmp = JSON.parse(data);
+        //
+        //             if (tmp.message === "ok") {
+        //                 sensorNodeOne.lightValue.red = tmp.red;
+        //                 sensorNodeOne.lightValue.green = tmp.green;
+        //                 sensorNodeOne.lightValue.blue = tmp.blue;
+        //             }
+        //
+        //             //log.debug("GET AUF STATUS " + JSON.stringify(JSON.parse(data)));
+        //             log.debug("GET auf " + sensorNodeOne.hostname + " Result: " + JSON.stringify(tmp));
+        //
+        //         })
+
+
+        .catch(function (error) {
+            log.debug("SENSOR READ failed with error: " + error);
+        });
+
+    return promise;
+}
 
 /*
 *
@@ -412,25 +455,25 @@ function updateFromSensors() {
 */
 
 function updateToActors() {
-
-    var promise = coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.red, 'PUT', sensorNodeTwo.lampValue.red.toString())
-
-        .then(function () {
-            return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.green, 'PUT', sensorNodeTwo.lampValue.green.toString())
-        })
-
-        .then(function () {
-            return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.blue, 'PUT', sensorNodeTwo.lampValue.blue.toString())
-        })
-
-        .then(function () {
-            return coapRequest(sensorNodeTwo.hostname, '/temp', 'PUT', sensorNodeOne.surfaceTemp)
-        })
-
-        .catch(function (error) {
-            log.debug("ACTOR PUT failed with error: " + error);
-        });
-
+    //
+    // var promise = coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.red, 'PUT', sensorNodeTwo.lampValue.red.toString())
+    //
+    //     .then(function () {
+    //         return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.green, 'PUT', sensorNodeTwo.lampValue.green.toString())
+    //     })
+    //
+    //     .then(function () {
+    //         return coapRequest(sensorNodeTwo.hostname, sensorNodeTwo.lampPaths.blue, 'PUT', sensorNodeTwo.lampValue.blue.toString())
+    //     })
+    //
+    //     .then(function () {
+    //         return coapRequest(sensorNodeTwo.hostname, '/temp', 'PUT', sensorNodeOne.surfaceTemp)
+    //     })
+    //
+    //     .catch(function (error) {
+    //         log.debug("ACTOR PUT failed with error: " + error);
+    //     });
+    //
     log.debug("Actor Put succsessfull");
 
     return promise;
@@ -448,13 +491,12 @@ function coapRequest(hostname, path, method, payload) {
 
     return new Promise(function (resolve, reject) {
 
-
         var servicesRequest = coap.request({
             hostname: hostname,
             pathname: path,
             method: method,
             multicast: true,
-            multicastTimeout: 1000
+            multicastTimeout: 2000
         });
 
 
@@ -471,18 +513,24 @@ function coapRequest(hostname, path, method, payload) {
             });
 
         } else if (method === "GET") {
-
             servicesRequest.on('response', function (servicesResponse) {
                 servicesResponse.on('error', function (error) {
                     log.error(error);
                     reject(error);
                 });
 
-                let tmp = servicesResponse.payload.toString();
-                //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
-                resolve(tmp);
-            });
 
+                //let tmp = servicesResponse.payload.toString();
+                console.log("########################################");
+                console.log("########################################");
+                console.log(servicesResponse.rsinfo);
+                console.log(servicesResponse.payload.toString());
+                console.log("########################################");
+                console.log("########################################");
+                //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
+                resolve("ok");
+                // resolve(tmp)
+            });
         } else {
             reject(Error("Invalid Method"));
         }
@@ -500,29 +548,37 @@ function displayUpdate() {
 
     return new Promise(function (resolve, reject) {
 
-        var date = new Date();
+        /*
+                var date = new Date();
 
-        log.info("######################################## AQUARIUM GATEWAY ########################################");
-        log.info("###   Node Side   ########   " + colors.warn(date) + "   #######   Server Side   ###");
-        log.info("###########################################            ###########################################");
-        log.info("### Number Nodes      Number Ressources ###            ###########################################");
-        log.info("###      " + colors.data(communicationStatus.numberNodes) + "        #         " + colors.data(communicationStatus.numberRessources) + "         #####            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###             Requests                ###            ###########################################");
-        log.info("### Succsessful               Failed    ###            ###########################################");
-        log.info("###                                     ###            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("###########################################            ###########################################");
-        log.info("##################################################################################################");
+                log.info("######################################## AQUARIUM GATEWAY ########################################");
+                log.info("###   Node Side   ########   " + colors.warn(date) + "   #######   Server Side   ###");
+                log.info("###########################################            ###########################################");
+                log.info("### Number Nodes      Number Ressources ###            ###########################################");
+                log.info("###      " + colors.data(communicationStatus.numberNodes) + "        #         " + colors.data(communicationStatus.numberRessources) + "         #####            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###             Requests                ###            ###########################################");
+                log.info("### Succsessful               Failed    ###            ###########################################");
+                log.info("###                                     ###            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("###########################################            ###########################################");
+                log.info("##################################################################################################");
+        */
 
         resolve();
 
     });
 }
+
+
+function CoapSensor() {
+
+}
+
 
