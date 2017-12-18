@@ -1,6 +1,9 @@
 package de.haw.list.facade;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +43,8 @@ public class RestFacadeController {
 	private ActorService actorService;
 
 	@RequestMapping("/home")
-	public String handler() {
-		return "home";
+	public void handler(HttpServletResponse response) throws IOException {
+		response.sendRedirect("index.html");
 	}
 
 	@RequestMapping("/test")
