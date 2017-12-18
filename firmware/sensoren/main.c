@@ -137,15 +137,17 @@ int main(void)
         phydat_dump(&temp_read, dim_temp);
         phydat_dump(&light_read, dim_light);
         
-        puts("Temperatur:");
-        printf("temp.val[0] = %d\n", temp.val[0]);
-        printf("temp.val[1] = %d\n", temp.val[1]);
-        puts("RGB-Licht:");
-        printf("light.val[0] = %d\n", light.val[0]);
-        printf("light.val[1] = %d\n", light.val[1]);
-        printf("light.val[2] = %d\n", light.val[2]);
-        printf("/cli/stats: %d\n", req_count);
-        printf("-------------------------------------------\n");
+        if(PRINT_ON_CONSOLE){
+            puts("Temperatur:");
+            printf("temp.val[0] = %d\n", temp.val[0]);
+            printf("temp.val[1] = %d\n", temp.val[1]);
+            puts("RGB-Licht:");
+            printf("light.val[0] = %d\n", light.val[0]);
+            printf("light.val[1] = %d\n", light.val[1]);
+            printf("light.val[2] = %d\n", light.val[2]);
+            printf("/cli/stats: %d\n", req_count);
+            printf("-------------------------------------------\n");
+        }
         
         xtimer_sleep(1);
     }
