@@ -44,20 +44,26 @@
 #include "net/gnrc/sixlowpan.h"
 #include "net/gnrc/sixlowpan/netif.h"
 
+
+// RGB-LED
+#include "rgbled.h"
+
 // LED bar
 #include "log.h"
 #include "xtimer.h"
 #include "grove_ledbar.h"
 #include "grove_ledbar_params.h"
 
-#include "gcoap_cli.h"
-
-/*'
-#include "shell.h"
+// heating
 #include "periph/gpio.h"
+
+
+// CoAP
+#include "gcoap_cli.h" // must be last include
+
+/*
+#include "shell.h"
 */
-// RGB-LED
-#include "rgbled.h"
 
 #define MAIN_QUEUE_SIZE (4)
 
@@ -95,18 +101,21 @@ int main(void)
     color_rgb_t color = {red, green, blue};
     rgbled_init(&led, PWM_DEV(1), 0, 1, 2);
 
-    // heating values/ temp values
+    // temp values
     grove_ledbar_t dev;
-    uint16_t temp_set = 0;
+    phydat_t temp_set = { .val = {0}, .unit = 0, .scale = 0};
+    uint8_t led_set = 0;
     /* init display */
     if (grove_ledbar_init(&dev, &grove_ledbar_params[0]) != 0) {
         puts("[FAILED]");
         return 1;
     }
+
+    // heating
+    gpio_init(GPIO_PIN(0,23), GPIO_OUT);
     
     // begin
     puts("Welcome to the RIOT-PO!\n");
-    
     /*
     puts("All up, running the shell now");
     char line_buf[SHELL_DEFAULT_BUFSIZE];
@@ -121,9 +130,28 @@ int main(void)
         color.b = blue;
         rgbled_set(&led, &color);
 
-        // set heting values
-        temp_set = temp;
-        grove_ledbar_set(&dev, temp_set);
+        // set temp values
+        temp_set.val[0] = temp.val[0];
+        
+        if(temp_set.val[0]<18) led_set = 0;                           // no bar
+        if(temp_set.val[0]>=18 && temp_set.val[0]<=19) led_set = 25;  // 1 bar
+        if(temp_set.val[0]>19 && temp_set.val[0]<=20) led_set = 50;   // 2 bar
+        if(temp_set.val[0]>20 && temp_set.val[0]<=21) led_set = 75;   // 3 bar
+        if(temp_set.val[0]>21 && temp_set.val[0]<=22) led_set = 100;  // 4 bar
+        if(temp_set.val[0]>22 && temp_set.val[0]<=23) led_set = 125;  // 5 bar
+        if(temp_set.val[0]>23 && temp_set.val[0]<=24) led_set = 150;  // 6 bar
+        if(temp_set.val[0]>24 && temp_set.val[0]<=25) led_set = 175;  // 7 bar
+        if(temp_set.val[0]>25 && temp_set.val[0]<=26) led_set = 200;  // 8 bar
+        if(temp_set.val[0]>26 && temp_set.val[0]<=28) led_set = 225;  // 9 bar
+        if(temp_set.val[0]>28) led_set = 255;                         // 10 bar
+        grove_ledbar_set(&dev, led_set);
+
+        //heating
+        if(!heat){
+            gpio_clear(GPIO_PIN(0,23));
+        }else{
+            gpio_set(GPIO_PIN(0,23));
+        }
     }
             
     return 0;
