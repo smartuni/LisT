@@ -39,10 +39,9 @@ public class RestFacadeController {
 	@Autowired
 	private ActorService actorService;
 
-	@RequestMapping("/")
-	public String handler(Model model) {
-		model.addAttribute("msg", "a spring-boot example");
-		return "myPage";
+	@RequestMapping("/home")
+	public String handler() {
+		return "home";
 	}
 
 	@RequestMapping("/test")
