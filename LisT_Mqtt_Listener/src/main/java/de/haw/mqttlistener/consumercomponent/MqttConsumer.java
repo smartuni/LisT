@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 
 import de.haw.mqttlistener.sensorcomponent.model.Log;
 import de.haw.mqttlistener.sensorcomponent.repo.LogRepository;
@@ -158,8 +159,8 @@ public class MqttConsumer {
     	HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject, getHeader());
     	
     	System.out.println("ausserhalb des try catch Blockes");
-    	ResponseEntity<?> response = restClient.exchange("http://127.0.0.1:80/api/sensors/value", HttpMethod.POST, httpEntity, ResponseEntity.class);
-    	System.out.println("Response " + response.toString());
+    	ResponseEntity<?> response = restClient.exchange("http://141.22.28.86:80/api/sensors/values", HttpMethod.POST, httpEntity, ResponseEntity.class);
+    	System.out.println("Response: " + response.toString());
     	System.out.println("an Rest-Facade geschickt");
     }
     
