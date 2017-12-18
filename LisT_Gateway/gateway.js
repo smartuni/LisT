@@ -1,11 +1,61 @@
+
+//############ Run Parameters ##########################################################################################
+
+var argv = require('minimist')(process.argv.slice(2));
+
+if (argv.help) {
+
+    console.log("Parameter description:");
+    console.log("");
+    console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
+    console.log("");
+    console.log("--logLevel             debug , info ");
+    console.log("");
+    console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
+
+    process.exit(0);
+}
+
+
+//var logLevel = 'debug';
+
+//# Parameter ##### exists? ######### copy #### default ##
+var logLevel = (argv.logLevel ? argv.logLevel : 'debug');
+
+//######################################################################################################################
+
+//var colors = require('colors');
 var q = require('q');
 var mqtt = require('mqtt');
+var log = require('console-log-level')({level: logLevel});
+var Jetty = require("jetty");
 
+
+// colors.setTheme({
+//     silly: 'rainbow',
+//     input: 'grey',
+//     verbose: 'blue',
+//     prompt: 'grey',
+//     info: 'green',
+//     data: 'cyan',
+//     help: 'cyan',
+//     warn: 'yellow',
+//     debug: 'grey',
+//     error: 'red',
+//     serverColor: 'green'
+// });
+
+
+/*
+*
+* #### Connection Config ###############################################################################################
+*
+*/
 var Frontend = {
     url: 'mqtt://141.22.28.86',
     port: '1883',
-    subscribeTopic: 'set_target_values',
-    publishTopic: 'iot_data',
+    subscribeTopic: 'actor',
+    publishTopic: 'test',
     status: 'disconnected',
     connect: function () {
         Frontend.client = mqtt.connect(Frontend.url, {
@@ -14,38 +64,164 @@ var Frontend = {
     }
 };
 
+var sensorNodes = [{
+    hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
+    supportedPaths: [
+        {
+            path: "/temp",
+            typ: "GET",
+
+        }, {
+            path: "/light",
+            typ: "GET",
+
+        }],
+}, {
+    hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
+    supportedPaths: [
+        {
+            path: "/temp",
+            typ: "GET",
+
+        }, "/light"],
+}];
 
 
 var sensorNodeOne = {
-    hostname: "fe80::68c0:6d50:52ae:432a%lowpan0",
+    //hostname: "fe80::68c0:6d50:52ae:432a%lowpan0",
+    hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
     temperaturePath: "/temp",
-    temperatureValue: "nothing",
+    surfaceTemp: "0",
+    ambientTemp: "0",
+    message: "",
     lightPath: "/light",
+    lightValue: {
+        red: "0",
+        green: "0",
+        blue: "0"
+
+    },
     writePath: "/cli/stats"
 };
+
+var sensorNodeTwo = {
+    hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
+    lampPaths: {
+        red: "/red",
+        green: "/green",
+        blue: "/blue"
+    },
+    lampValue: {
+        red: "0",
+        green: "0",
+        blue: "0"
+
+    }
+};
+
+var data = {
+    node_1: {
+        temperature: "0",
+        light: {
+            red: "0",
+            green: "0",
+            blue: "0"
+        },
+        ph: "0"
+    },
+    node_2: {
+        lampStatus: "0"
+    }
+};
+
+var communicationStatus = {
+    sumPackages: 0,
+    faildPackages: 0,
+    transmittedPackages: 0,
+    numberNodes: 0,
+    numberRessources: 0
+};
+
 
 /*
 *
 *
 *
 */
+var jetty = new Jetty(process.stdout);
+
+jetty.clear();
+
+Frontend.connect();
+
+Frontend.client.on('connect', function () {
+    Frontend.status = 'connected';
+    Frontend.client.subscribe(Frontend.subscribeTopic);
+    //log.debug(colors.info("Frontend connected and subscribed to: " + Frontend.subscribeTopic));
+});
+
+Frontend.client.on('reconnect', function () {
+    Frontend.status = 'reconnect';
+});
+
+Frontend.client.on('close', function () {
+    Frontend.status = 'disconnected';
+});
+
+Frontend.client.on('error', function (error) {
+    log.error('MQTT Client Errored' + error);
+});
+
+Frontend.client.on('message', function (topic, message) {
+    //TODO Handle incomming messages
+
+    log.debug("MQTT Message recieved: " + message.toString());
+
+});
+
+
+console.log(data);
+console.log(communicationStatus);
+
+
+/*
+*
+*########### START INTERVAL ###########################################################################################
+*
+*/
+
 var productionInterval = setInterval(function () {
 
     updateFromSensors()
+
         .then(function () {
-            console.log("Sensor Update successful");
+            log.debug(colors.info("Sensor Update successful"));
+
             return calculate();
         })
+
         .then(function () {
-            console.log("calculate successful");
+            log.debug(colors.info("Calculation successful"));
+
             return forwardToFrontend();
         })
+
         .catch(function (error) {
-            console.log("INTERVAL faild with error: " + error);
+            log.debug(colors.error("Production interval faild with error: " + error));
         });
 
+}.bind(this), 5000);
 
-}.bind(this), 2000);
+
+if (logLevel === 'info') {
+
+    var displayInterval = setInterval(function () {
+        jetty.clear();
+        displayUpdate(false, false);
+    }, 1000);
+
+}
+
 
 /*
 *
@@ -55,14 +231,45 @@ var productionInterval = setInterval(function () {
 function forwardToFrontend() {
 
     return new Promise(function (resolve, reject) {
+        if (Frontend.status === "connected") {
 
-        console.log("frontend");
-        resolve();
+            Frontend.client.publish(Frontend.publishTopic, JSON.stringify(data), function (error) {
 
-        //reject();
+                if (error) {
+                    reject(error)
 
+                } else {
+
+                    log.debug("Data: " + JSON.stringify(data), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
+                    resolve();
+
+                }
+
+            });
+
+        } else {
+
+            reject(Frontend.status);
+
+        }
     });
 }
+
+/*
+*
+*
+*
+*/
+function coapDiscovery() {
+
+    return new Promise(function (resolve, reject) {
+
+
+        reject();
+        resolve();
+    });
+}
+
 
 /*
 *
@@ -73,38 +280,80 @@ function calculate() {
 
     return new Promise(function (resolve, reject) {
 
-        console.log("calculate");
+        data.temperature = sensorNodeOne.surfaceTemp;
+        data.light = sensorNodeOne.lightValue;
+
+
+        if (sensorNodeOne.lightValue.red.toString() < 600) {
+            sensorNodeTwo.lampValue.red = 255;
+            sensorNodeTwo.lampValue.green = 255;
+            sensorNodeTwo.lampValue.blue = 255;
+        } else {
+            sensorNodeTwo.lampValue.red = 0;
+            sensorNodeTwo.lampValue.green = 0;
+            sensorNodeTwo.lampValue.blue = 0;
+        }
+
         resolve();
-
-        //reject();
-
     });
 }
 
 /*
-*
+*{"surfaceTemp": 2575, "ambientTemp": 2469, "message": ok}
 *
 *
 */
 function updateFromSensors() {
 
-    console.log('Reading from Sensors');
+    log.debug('Initialize COAP Request');
 
-    var promise = coapRequest(sensorNodeOne.hostname, sensorNodeOne.temperaturePath, 'GET')
-        .then(function (value) {
-            console.log('Request 1 complete with return: ' + value);
-            return coapRequest(sensorNodeOne.hostname, sensorNodeOne.lightPath, 'GET');
+    var promise = coapRequest(sensorNodeOne.hostname, "/status", 'GET')
+
+    // .then(function (data) {
+    //     let jsonData = JSON.parse(data);
+    //     sensorNodeOne.ambientTemp = JSON.stringify(jsonData.ambientTemp).slice(0, 2) + "." + JSON.stringify(jsonData.ambientTemp).slice(2, 4);
+    //     sensorNodeOne.surfaceTemp = JSON.stringify(jsonData.surfaceTemp).slice(0, 2) + "." + JSON.stringify(jsonData.surfaceTemp).slice(2, 4);
+    //     sensorNodeOne.message = jsonData.message;
+    //
+    //     log.debug('GET RESULT: ' + JSON.stringify(sensorNodeOne));
+    //
+    //     return coapRequest(sensorNodeOne.hostname, sensorNodeOne.lightPath, 'GET');
+    // })
+    //
+    // // .then(function (data) {
+    // //     console.log(data);
+    // //
+    // //     console.log("#######-> " + data.blue);
+    // //     console.log(JSON.stringify(data));
+    // //
+    // //
+    // // })
+    //
+    // .then(function (data) {
+    //
+    //     //sensorNodeOne.lightValue = data;
+    //
+    //     log.debug(data);
+    //
+    //
+    //     return coapRequest(sensorNodeOne.hostname, "/status", 'GET');
+    //
+    //
+    // })
+
+        .then(function (data) {
+
+
+            console.log("test");
+
+            log.debug("GET AUF STATUS " + JSON.stringify(JSON.parse(data)));
+
+
         })
-        .then(function (value) {
-            console.log('Request 2 complete with return: ' + value);
-            return coapRequest(sensorNodeOne.hostname, sensorNodeOne.writePath, 'PUT', '2');
-        })
-        .then(function (value) {
-            console.log('Request 3 complete with return: ' + value);
-            return coapRequest(sensorNodeOne.hostname, sensorNodeOne.writePath, 'GET');
-        })
+
+
         .catch(function (error) {
-            console.log("SENSOR READ failed with error: " + error);
+            log.debug("SENSOR READ failed with error: " + error);
         });
 
     return promise;
@@ -130,34 +379,29 @@ function coapRequest(hostname, path, method, payload) {
         });
 
 
-        if (method == "PUT") {
-            servicesRequest.write(JSON.stringify(payload));
-            console.log("Sensor " + method + " on: " + hostname, path + " ----> " + payload);
+        if (method === "PUT") {
+            servicesRequest.write(payload);
+            log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + payload);
 
             servicesRequest.on('response', function (servicesResponse) {
                 servicesResponse.on('error', function (error) {
-                    console.log(error);
+                    log.error(error);
                     reject(error);
                 });
-
-                let tmp = servicesResponse.payload.toString();
-                console.log("Sensor " + method + " Response on: " + hostname, path + " ----> " + tmp);
                 resolve();
-
             });
 
-        } else if (method == "GET") {
+        } else if (method === "GET") {
 
             servicesRequest.on('response', function (servicesResponse) {
                 servicesResponse.on('error', function (error) {
-                    console.log(error);
+                    log.error(error);
                     reject(error);
                 });
 
                 let tmp = servicesResponse.payload.toString();
-                console.log("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
-
-                resolve();
+                //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
+                resolve(tmp);
             });
 
         } else {
@@ -168,74 +412,38 @@ function coapRequest(hostname, path, method, payload) {
     });
 }
 
+/*
+*
+*
+*
+*/
+function displayUpdate() {
 
-//CLIENT ############################################################
+    return new Promise(function (resolve, reject) {
 
-Frontend.connect();
+        var date = new Date();
 
-Frontend.client.on('connect', function () {
-    Frontend.status = 'connected';
-    Frontend.client.subscribe(Frontend.subscribeTopic);
-    console.log("Frontend connected and subscribed to: " + Frontend.subscribeTopic);
-});
+        log.info("######################################## AQUARIUM GATEWAY ########################################");
+        log.info("###   Node Side   ########   " + colors.warn(date) + "   #######   Server Side   ###");
+        log.info("###########################################            ###########################################");
+        log.info("### Number Nodes      Number Ressources ###            ###########################################");
+        log.info("###      " + colors.data(communicationStatus.numberNodes) + "        #         " + colors.data(communicationStatus.numberRessources) + "         #####            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###             Requests                ###            ###########################################");
+        log.info("### Succsessful               Failed    ###            ###########################################");
+        log.info("###                                     ###            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("###########################################            ###########################################");
+        log.info("##################################################################################################");
 
-Frontend.client.on('error', function (error) {
-    console.log('MQTT Client Errored');
-    console.log(error);
-});
+        resolve();
 
-Frontend.client.on('message', function (topic, message) {
-    // Do some sort of thing here.
-
-    console.log(message.toString());
-
-
-});
-Frontend.client.publish('iot_data', 'Dies das jenes')
-
-//SERVER ############################################################
-/*var mosca = require('mosca');
-
-var settings = {
-    port: 1883
-    //backend: ascoltatore
-};
-
-
-var message = {
-    topic: 'iot_data',
-    payload: 'Dies das jenes', // or a Buffer
-    qos: 0, // 0, 1, or 2
-    retain: false // or true
-};
-
-
-var mqttServer = new mosca.Server(settings);
-
-
-mqttServer.on('clientConnected', function (client) {
-    console.log('client connected', client.id);
-});
-
-
-// fired when a message is received
-mqttServer.on('published', function (packet, client) {
-    console.log('Published', packet.payload);
-});
-
-mqttServer.on('ready', setup);
-
-// fired when the mqtt server is ready
-function setup() {
-    console.log('Mosca server is up and running');
-
-    setInterval(function () {
-        mqttServer.publish(message, function () {
-            console.log('message send!');
-        });
-    },3000);
-
-
+    });
 }
 
-*/
