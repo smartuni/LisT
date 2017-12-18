@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import de.haw.mqttlistener.sensorcomponent.model.Log;
@@ -151,8 +153,11 @@ public class MqttConsumer {
     		throw new JsonMalFormedException(message);
     	}
     	
+    	HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject);
+    	
     	System.out.println("ausserhalb des try catch Blockes");
-    	restClient.postForObject("http://127.0.0.1:80/api/sensors/value", jsonObject, ResponseEntity.class);
+    	ResponseEntity<?> response = restClient.exchange("http://127.0.0.1:80/api/sensors/value", HttpMethod.POST, httpEntity, ResponseEntity.class);
+    	System.out.println("Response " + response.toString());
     	System.out.println("an Rest-Facade geschickt");
     }
 	
