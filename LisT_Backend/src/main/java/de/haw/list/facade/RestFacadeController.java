@@ -1,7 +1,9 @@
 package de.haw.list.facade;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +74,24 @@ public class RestFacadeController {
 //			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //		}
 //	}
+	
+	/**
+	 * Fuegt neuen Sensorwert hinzu.
+	 * 
+	 * @param sensorValue als JSON
+	 * @return Sensorwert
+	 * @throws SensorNotFoundException 
+	 */
+	@RequestMapping(value = "/api/sensors/values", method = RequestMethod.POST)
+	public ResponseEntity<?> addSensorValue(@RequestBody String value) throws SensorNotFoundException {
+		try {
+			return new ResponseEntity<SensorValue>(sensorPersistenceService.addSensorValue(new JSONObject(value)), HttpStatus.CREATED);
+		} catch (SensorNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	/**
 	 * Gibt Sensor zurueck.

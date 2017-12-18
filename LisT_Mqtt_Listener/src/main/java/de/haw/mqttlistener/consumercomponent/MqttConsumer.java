@@ -16,6 +16,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.ResponseEntity;
 
 import de.haw.mqttlistener.sensorcomponent.model.Log;
 import de.haw.mqttlistener.sensorcomponent.repo.LogRepository;
@@ -29,7 +32,7 @@ import de.haw.mqttlistener.util.JsonMalFormedException;
  * @author Lydia Pflug
  * 20.11.2017
  */
-@Component
+//@Component
 public class MqttConsumer {
 	
 	private SensorPersistenceService sensorPersistenceService;
@@ -42,13 +45,20 @@ public class MqttConsumer {
     private String clientId = MqttClient.generateClientId();
     private MemoryPersistence persistence = new MemoryPersistence();
     private boolean connected = false;
+    private RestTemplate restClient;
     
     
-    @Autowired
-	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
-		this.logRepo = logRepo;
-		this.sensorPersistenceService = sensorPersistenceService;
-	}
+   // @Autowired
+//	public MqttConsumer(LogRepository logRepo, SensorPersistenceService sensorPersistenceService) {
+//		this.logRepo = logRepo;
+//		this.sensorPersistenceService = sensorPersistenceService;
+//	}
+    
+    public MqttConsumer() {
+    	restClient = new RestTemplate();
+    	
+    	
+    }
 	
 	/**
      * This method is the overridden callback on receiving messages.
@@ -62,9 +72,9 @@ public class MqttConsumer {
         public void messageArrived(String topic, MqttMessage message) throws JsonMalFormedException, ProtocolException, UnsupportedEncodingException, MalformedURLException, IOException {     
     		
     		System.out.println("Topic: " + topic + ", Message: " + (new String(message.getPayload())));
-            System.out.println("Hilfe!!!");
-            logRepo.save(new Log(topic + "/" + message.toString()));
-    		persistMessage(message.toString());
+            sendSensorValue(message.toString());
+            //logRepo.save(new Log(topic + "/" + message.toString()));
+    		//persistMessage(message.toString());
         }
 
     	@Override
@@ -123,6 +133,27 @@ public class MqttConsumer {
     	
     	sensorPersistenceService.addSensorValue(jsonObject);
     	
+    }
+    
+    private void sendSensorValue(String message) throws JsonMalFormedException {
+
+    	JSONObject jsonObject = null;
+    	
+    	try {
+    		jsonObject = new JSONObject(message);
+    		System.out.println("Konvertiert: " + message);
+    		System.out.println("Json: " + jsonObject.toString());
+    		//logRepo.save(new Log("Konvertiert: " + message));
+            //logRepo.save(new Log("Json: " + jsonObject.toString()));
+    	} catch(JSONException e) {
+    		e.printStackTrace();
+    		//logRepo.save(new Log(e.toString())); 
+    		throw new JsonMalFormedException(message);
+    	}
+    	
+    	System.out.println("ausserhalb des try catch Blockes");
+    	restClient.postForObject("http://127.0.0.1:80/api/sensors/value", jsonObject, ResponseEntity.class);
+    	System.out.println("an Rest-Facade geschickt");
     }
 	
 

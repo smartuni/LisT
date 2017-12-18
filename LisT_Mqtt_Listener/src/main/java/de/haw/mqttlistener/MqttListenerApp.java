@@ -14,10 +14,10 @@ import de.haw.mqttlistener.sensorcomponent.services.SensorPersistenceService;
 public class MqttListenerApp {
 	
 	private static MqttConsumer mqttConsumer;
-	private static SensorPersistenceService sensorPersistenceService;
+//	private static SensorPersistenceService sensorPersistenceService;
 	
-	@Autowired
-	private static LogRepository logRepository;
+//	@Autowired
+//	private static LogRepository logRepository;
 	
 //	@Autowired
 //	private static MqttConsumer mqttConsumer;
@@ -25,7 +25,8 @@ public class MqttListenerApp {
 	public static void main(String[] args) {
 //		sensorPersistenceService = new SensorPersistenceServiceImpl();
 		
-		mqttConsumer = new MqttConsumer(logRepository, sensorPersistenceService);
+		mqttConsumer = new MqttConsumer();
+//		mqttConsumer = new MqttConsumer(logRepository, sensorPersistenceService);
 		mqttConsumer.consume();
 	}
 
