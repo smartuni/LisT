@@ -71,3 +71,4 @@ LisT_Firmware/sensoren/bin
 firmware/sensoren/bin/
 firmware/actuators/bin/
 firmware/rgb_minimal/bin/
+Treiber/test/bin/
