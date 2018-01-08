@@ -120,7 +120,7 @@ public class MqttConsumer {
     	
     	
     	System.out.println("ausserhalb des try catch Blockes");
-    	ResponseEntity<?> response = restClient.exchange("http://141.22.28.86:80/api/sensors/values", HttpMethod.POST, httpEntity, ResponseEntity.class);
+    	ResponseEntity<?> response = restClient.exchange("http://141.22.28.86:8080/api/sensors/values", HttpMethod.POST, httpEntity, ResponseEntity.class);
     	System.out.println("Response: " + response.toString());
     	System.out.println("an Rest-Facade geschickt");
     }
