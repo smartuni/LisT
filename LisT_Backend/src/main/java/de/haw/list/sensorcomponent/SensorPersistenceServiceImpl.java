@@ -62,6 +62,8 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	    String timestamp = "";
 	    LocalDateTime dateTime = null;
 	    double value1 = 0.0;
+	    double value2 = 0.0;
+	    double value3 = 0.0;
 	 
 	    try { 
 	 
@@ -103,12 +105,20 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	      // TODO in eine Stringliste speichern
 	      for (int i = 0; i < jsonArray.length(); i++) {
 	    	  System.out.println(jsonArray.getDouble(i));
-	    	  value1 = jsonArray.getDouble(i);
+	    	  //value1 = jsonArray.getDouble(i);
 //	        values.add(jsonArray.getDouble(i)/*.getJSONObject(i).getDouble("values")*/); 
 	      } 
 	      
+	      value1 = jsonArray.getDouble(0);
+	      value2 = jsonArray.getDouble(1);
+	      value3 = jsonArray.getDouble(2);
+	      
+	      
 	      logRepo.save(new Log("Werte: " + Arrays.asList(values).toString())); 
 	      logRepo.save(new Log("Wert: " + (value1))); 
+	      logRepo.save(new Log("Wert: " + (value2))); 
+	      logRepo.save(new Log("Wert: " + (value3))); 
+	      
 	 
 	      timestamp = (String) jsonObject.get("timestamp"); 
 	 
@@ -132,7 +142,7 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 	    
 	    logRepo.save(new Log("alles geparst"));
 	    
-	    SensorValue sensorValue = new SensorValue(sensorOptional.get(), value1, 0.0, 0.0, dateTime); 
+	    SensorValue sensorValue = new SensorValue(sensorOptional.get(), value1, value2, value3, dateTime); 
 	    
 	    logRepo.save(new Log("fertig: " + sensorValue.toString()));
 	    
