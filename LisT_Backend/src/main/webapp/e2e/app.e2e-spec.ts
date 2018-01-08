@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('listfrontend App', () => {
+describe('webapp App', () => {
   let page: AppPage;
 
   beforeEach(() => {
@@ -9,6 +9,6 @@ describe('listfrontend App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to bm!');
+    expect(page.getParagraphText()).toEqual('Welcome to app!');
   });
 });
