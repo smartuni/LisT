@@ -48,22 +48,13 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		sensorRepo.deleteAll();
 		logRepo.deleteAll();
 		
-		Sensor sensor1 = new Sensor("s1", SensorType.TEMP, "TemperatureSensor", LocationType.INSIDE, 20, 15);
+		Sensor sensor1 = new Sensor("s1", SensorType.TEMP, "TemperatureSensor", LocationType.INSIDE, 35, 15);
+		Sensor sensor2 = new Sensor("s2", SensorType.TEMP, "TemperatureSensor2", LocationType.INSIDE, 35, 15);
+		Sensor sensor3 = new Sensor("s3", SensorType.LIGHT, "LightSensor", LocationType.INSIDE, 0, 0);
+		Sensor sensor4 = new Sensor("s4", SensorType.PH, "pHSensor", LocationType.INSIDE, 9, 6);
 		
-		sensorRepo.save(sensor1);
+		sensorRepo.save(Arrays.asList(sensor1, sensor2, sensor3, sensor4));
 		
-		Sensor sensor2 = new Sensor("s2", SensorType.TEMP, "TemperatureSensor2", LocationType.INSIDE, 20, 15);
-		
-		sensorRepo.save(sensor2);
-		
-//		List<Double> values1 = new ArrayList<>();
-//		values1.add(10.0);
-//		List<Double> values2 = new ArrayList<>();
-//		values1.add(12.0);
-//		List<Double> values3 = new ArrayList<>();
-//		values1.add(13.0);
-//		List<Double> values4 = new ArrayList<>();
-//		values1.add(14.0);
 		
 		
 		SensorValue sv1 = new SensorValue(sensor1, 10.0, 0.0, 0.0, LocalDateTime.now());
@@ -79,23 +70,6 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 		logRepo.save(Arrays.asList(log1, log2));
 		
-//		MqttConsumer c = new MqttConsumer(logRepo);
-//        c.consume();
-		//mqttConsumer.consume();
-		
-//		MemoryPersistence persistence = new MemoryPersistence();
-		
-		
-//		logRepo.save(new Log("Connection erstellt"));
-		
-		
-//		MqttClient client2 = new MqttClient("tcp://localhost:1883", "2", persistence);
-
-
-		//		simpleMqttClient = new SimpleMqttClient();
-		
-//		simpleMqttClient.publishMessage();
-//		simpleMqttClient.subscribeMessage();
 	}
 	
 	@Override
