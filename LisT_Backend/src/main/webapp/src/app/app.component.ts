@@ -24,14 +24,20 @@ export class AppComponent {
     this.result = 'loading...';
     this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
   }
+    private printValuesSensor3(): void {
+    this.result = 'loading...';
+    this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
+  }
+    private printValuesSensor4(): void {
+    this.result = 'loading...';
+    this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
+  }
+  
   private printSensor(): void {
     this.result = 'loading...';
     this.http.get(`/api/sensors`).subscribe(response => this.result = response.text());
   }
 
-  private printSKData(): void {
-    this.result = 'loading...';
-    this.http.get('http://141.22.28.85/sensor').subscribe(response => this.result = response.text());
-  }
+
 
 }
