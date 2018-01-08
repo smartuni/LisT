@@ -32,8 +32,8 @@ To use our system, you'll need the following hardware:
 
 The sensor board comes with a variety of sensor already mounted on the pcb and will provide an easy setup. If instead you want to use external sensors or different boards you can find a list of RIOT compatible boards and sensors using the following links:
 
-https://github.com/RIOT-OS/RIOT/wiki/RIOT-Platforms
-https://riot-os.org/api/group__drivers__sensors.html
+* https://github.com/RIOT-OS/RIOT/wiki/RIOT-Platforms
+* https://riot-os.org/api/group__drivers__sensors.html
 
 Further external hardware:
 
