@@ -16,13 +16,13 @@ export class AppComponent {
     private http: Http){
   }
 
-  private printUsers(): void {
+  private printValuesSensor1(): void {
     this.result = 'loading...';
-    this.http.get(`/user`).subscribe(response => this.result = response.text());
+    this.http.get(`/api/sensors/1/values/`).subscribe(response => this.result = response.text());
   }
-  private printTools(): void {
+  private printValuesSensor2(): void {
     this.result = 'loading...';
-    this.http.get(`/tools`).subscribe(response => this.result = response.text());
+    this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
   }
   private printSensor(): void {
     this.result = 'loading...';

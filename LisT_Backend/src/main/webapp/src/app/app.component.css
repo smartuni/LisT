@@ -3,7 +3,7 @@ body{
 	padding: 0px;
 	font-family: Arial;
 	color: white;
-	background-color: black;
+	background-color: white;
 	background-repeat: no-repeat;
 }
 
@@ -13,7 +13,7 @@ button{
 	width: 150px;
 	height: 40px;
 	color: white;
-	background-color: blue;
+	background-color: aqua;
 	opacity: .8;
 	line-height: 40px;
 	text-align: center;
