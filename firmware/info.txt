@@ -7,7 +7,7 @@ To change default lowpan channel on pi edit /etc/default/lowpan
 
 to change default lowpan channel in RIOT see: RIOT/sys/shell/commands/sc_netif.c
 
-change default channel for coap from 5683 to anything else, see
+to change default channel for coap from 5683 to anything else, see
 RIOT/examples/gcoap/bin/pkg/pda-d-01-kw2x/nanocoap/nanocap/nanocoap.h
 or GCOAP_PORT = 5683 in Makefile //see RIOT/examples/gcoap/Makefile 
 ...
