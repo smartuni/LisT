@@ -15,7 +15,8 @@
     "forin": true,
     "import-blacklist": [
       true,
-      "rxjs"
+      "rxjs",
+      "rxjs/Rx"
     ],
     "import-spacing": true,
     "indent": [
@@ -117,13 +118,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "bm",
+      "app",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "bm",
+      "app",
       "kebab-case"
     ],
     "use-input-property-decorator": true,

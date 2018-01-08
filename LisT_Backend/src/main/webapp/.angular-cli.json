@@ -1,15 +1,15 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "LisT_Backend"
+    "name": "ToolSpace"
   },
   "apps": [
     {
       "root": "src",
-      "outDir": "dist",
+      "outDir": "dist/static",
       "assets": [
         "assets",
-        "favicon.ico"
+        "rocket.ico"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -17,7 +17,7 @@
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
-      "prefix": "bm",
+      "prefix": "app",
       "styles": [
         "styles.css"
       ],
