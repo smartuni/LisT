@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -31,7 +32,7 @@ import de.haw.list.sensorcomponent.util.SensorNotFoundException;
  * @author Lydia Pflug 09.10.2017
  */
 @RestController
-public class RestFacadeController {
+public class RestFacadeController implements ErrorController {
 
 	@Autowired
 	private SensorPersistenceService sensorPersistenceService;
@@ -206,5 +207,18 @@ public class RestFacadeController {
 		}
 
 	}
+	
+	
+    private static final String PATH = "/error";
+
+    @RequestMapping(value = PATH)
+    public String error() {
+        return "Error handling";
+    }
+
+    @Override
+    public String getErrorPath() {
+        return PATH;
+    }
 
 }
