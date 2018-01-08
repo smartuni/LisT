@@ -37,7 +37,7 @@ The sensor board comes with a variety of sensor already mounted on the pcb and w
 
 Further external hardware:
 
-* 1x pH-sensor
+* 1x pH-sensor (Atlas Scientific EZO PH)
 * 1x heating element (desc tba)
 * 1x Antrax SwitchBox-Relais
 * 1x LED strip
