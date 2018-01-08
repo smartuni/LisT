@@ -6,21 +6,21 @@
 
 var argv = require('minimist')(process.argv.slice(2));
 
-if (argv.help) {
-    console.log("Parameter description:");
-    console.log("Option                         Description");
-    console.log("--mqttAddress                  Something like mqtt://141.22.28.86 ");
-    // console.log("");
-    console.log("--logLevel                     DEFAULT:    debug ");
-    console.log("                               OPTIONS:    debug, info ");
-    // console.log("");
-    console.log("--coapInterface                DEFAULT:    lowpan0");
-    // console.log("");
-    console.log("--coapMulticastAddress         DEFAULT:    ff02::1");
-    // console.log("");
-    console.log("--coapPort                     DEFAULT:    5873");
-    process.exit(0);
-}
+// if (argv.help) {
+//     console.log("Parameter description:");
+//     console.log("Option                         Description");
+//     console.log("--mqttAddress                  Something like mqtt://141.22.28.86 ");
+//     // console.log("");
+//     console.log("--logLevel                     DEFAULT:    debug ");
+//     console.log("                               OPTIONS:    debug, info ");
+//     // console.log("");
+//     console.log("--coapInterface                DEFAULT:    lowpan0");
+//     // console.log("");
+//     console.log("--coapMulticastAddress         DEFAULT:    ff02::1");
+//     // console.log("");
+//     console.log("--coapPort                     DEFAULT:    5873");
+//     process.exit(0);
+// }
 
 //# Parameter ##### exists? ######### copy #### default ##
 var logLevel = (argv.logLevel ? argv.logLevel : 'debug');
@@ -58,7 +58,8 @@ var coapConfig = {
     multicastAddress: "ff02::1",
     port: 5873,
     interface: "lowpan0",
-    discoveryPfad: "/status"
+    discoveryPfad: "/status",
+    discoveryTimeout: 2000,
 };
 
 
@@ -75,27 +76,31 @@ var Frontend = {
     }
 };
 
-var coapNodes = [{
-    hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
-    supportedPaths: [
-        {
-            path: "/temp",
-            typ: "GET",
 
-        }, {
-            path: "/light/rgb",
-            typ: "GET",
-
-        }],
-}, {
-    hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
-    supportedPaths: [
-        {
-            path: "/temp",
-            typ: "GET",
-
-        }, "/light"],
-}];
+var coapNodes = [];
+//
+// var coapNodes = [{
+//     hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
+//     statusResponse: "Something like ",
+//     supportedPaths: [
+//         {
+//             path: "/temp",
+//             typ: "GET",
+//
+//         }, {
+//             path: "/light/rgb",
+//             typ: "GET",
+//
+//         }],
+// }, {
+//     hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
+//     supportedPaths: [
+//         {
+//             path: "/temp",
+//             typ: "GET",
+//
+//         }, "/light"],
+// }];
 
 
 var sensorNodeOne = {
@@ -207,6 +212,8 @@ var productionInterval = setInterval(function () {
 
     updateFromSensors()
 
+    //coapDiscovery(true)
+
         .then(function () {
             log.debug("Sensor Update successful");
             return calculate();
@@ -286,20 +293,17 @@ function forwardToFrontend() {
 function coapDiscovery(update) {
 
     return new Promise(function (resolve, reject) {
-
-
             //TODO Add Latest update based cleanup here
             if (!update) {
                 coapNodes.length = 0;
             }
 
-
             let servicesRequest = coap.request({
-                hostname: coapConfig.multicastAddress,
+                hostname: coapConfig.multicastAddress + "%" + coapConfig.interface,
                 pathname: coapConfig.discoveryPfad,
                 method: 'GET',
                 multicast: true,
-                multicastTimeout: 2000
+                multicastTimeout: coapConfig.discoveryTimeout
             });
 
 
@@ -308,7 +312,6 @@ function coapDiscovery(update) {
                     log.error(error);
                     reject(error);
                 });
-
 
                 var addNode = true;
                 coapNodes.forEach(function (node) {
@@ -321,28 +324,26 @@ function coapDiscovery(update) {
                 if (addNode) {
                     coapNodes.push({
                         hostname: servicesResponse.rsinfo.address,
-                        supportedPaths: [
-                            {
-                                path: "/temp",
-                                typ: "GET",
-                            }, {
-                                path: "/light/rgb",
-                                typ: "GET",
-                            }],
-                    },)
+                        statusResponse: JSON.parse(servicesResponse.payload)
+                    })
                 }
 
-                //let tmp = servicesResponse.payload.toString();
+
                 console.log("########################################");
                 console.log("########################################");
-                console.log(servicesResponse.rsinfo);
-                console.log(servicesResponse.payload.toString());
+                console.log(coapNodes);
                 console.log("########################################");
                 console.log("########################################");
-                //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
-                resolve("ok");
-                // resolve(tmp)
+
+                // resolve("ok");
+
             });
+
+
+            setTimeout(function () {
+                resolve();
+
+            }, coapConfig.discoveryTimeout);
 
             servicesRequest.end();
         }
@@ -389,7 +390,7 @@ function updateFromSensors() {
 
     log.debug('Initialize COAP Request');
 
-    var promise = coapRequest(sensorNodeOne.hostname, "/light", 'GET')
+    var promise = coapRequest(sensorNodeOne.hostname, "/status", 'GET')
     // var promise = coapRequest(sensorNodeOne.hostname, "/temp", 'GET')
     //     var promise = coapRequest(sensorNodeTwo.hostname, "/.well-known/core", 'GET')
 
