@@ -8,11 +8,11 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class ValueService {
-  public baseUrl = 'http://localhost:4200/api';
+  public baseUrl = 'http://localhost:8181/api';
 
   constructor(private http: HttpClient) { }
 
-  getValues(): Observable<Values[]> {
-    return this.http.get(this.baseUrl + '/sensors/1/values');
+  getValues(): Observable<any> {
+  return this.http.get(this.baseUrl + '/sensors/1/values');
   }
 }
