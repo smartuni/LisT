@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 .vscode
 .DS_Store
@@ -57,8 +57,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-
-=======
 
 #Basti custom settings:
 firmware/coap/.kdev4/
