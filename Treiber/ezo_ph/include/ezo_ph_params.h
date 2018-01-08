@@ -49,7 +49,7 @@ extern "C" {
 /**
  * @brief   EZO pH configuration
  */
-static const ezo_ph_params_t tmp006_params[] =
+static const ezo_ph_params_t ezo_ph_params[] =
 {
 #ifdef EZO_PH_PARAMS_BOARD
     EZO_PH_PARAMS_BOARD,

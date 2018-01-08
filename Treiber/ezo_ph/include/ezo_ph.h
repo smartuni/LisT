@@ -35,43 +35,19 @@ extern "C"
  * @brief   EZO_PH Default Address
  */
 #ifndef EZO_PH_I2C_ADDRESS
-#define EZO_PH_I2C_ADDRESS         (0x41)
+#define EZO_PH_I2C_ADDRESS         (0x63)
 #endif
 
 /**
  * @brief   Default Conversion Time in us
  */
-#ifndef EZO_PH_CONVERSION_TIME
 #define EZO_PH_CONVERSION_TIME     (1E6)
-#endif
-
-/**
- * @name    Conversion rate and AVG sampling configuration
- * @{
- */
-#define EZO_PH_CONFIG_CR_AS1       (0x00)   /**< Conversion Time 0.25s, AVG Samples: 1 */
-#define EZO_PH_CONFIG_CR_AS2       (0x01)   /**< Conversion Time 0.5s, AVG Samples: 2 */
-#define EZO_PH_CONFIG_CR_AS4       (0x02)   /**< Conversion Time 1s, AVG Samples: 4 */
-#define EZO_PH_CONFIG_CR_AS8       (0x03)   /**< Conversion Time 2s, AVG Samples: 8 */
-#define EZO_PH_CONFIG_CR_AS16      (0x04)   /**< Conversion Time 4s, AVG Samples: 16 */
-#define EZO_PH_CONFIG_CR_DEF       EZO_PH_CONFIG_CR_AS4 /**< Default for Testing */
-/** @} */
 
 /**
  * @name    Constants for EZO_PH calibration
  * @{
  */
-#ifndef EZO_PH_CCONST_S0
-#define EZO_PH_CCONST_S0           (6.4E-14)    /**< Calibration Factor */
-#endif
-#define EZO_PH_CCONST_A1           (1.75E-3)    /**< Constant \f$a_{\mathrm{1}}\f$ */
-#define EZO_PH_CCONST_A2           (-1.678E-5)  /**< Constant \f$a_{\mathrm{2}}\f$ */
-#define EZO_PH_CCONST_TREF         (298.15)     /**< Constant \f$T_{\mathrm{REF}}\f$ */
-#define EZO_PH_CCONST_B0           (-2.94E-5)   /**< Constant \f$b_{\mathrm{0}}\f$ */
-#define EZO_PH_CCONST_B1           (-5.7E-7)    /**< Constant \f$b_{\mathrm{1}}\f$ */
-#define EZO_PH_CCONST_B2           (4.63E-9)    /**< Constant \f$b_{\mathrm{2}}\f$ */
-#define EZO_PH_CCONST_C2           (13.4)       /**< Constant \f$c_{\mathrm{2}}\f$ */
-#define EZO_PH_CCONST_LSB_SIZE     (156.25E-9)  /**< Sensor Voltage Register LSB Size */
+
 /** @} */
 
 /**

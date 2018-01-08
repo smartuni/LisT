@@ -47,6 +47,7 @@ int main(void)
 	uint8_t address = 0x63;
 	uint8_t bytes = 15;
 	char data[bytes];
+	ezo_ph_params_t *params = {.i2c = EZO_PH_PARAM_I2C, .addr = EZO_PH_PARAM_ADDR, .rate = EZO_PH_PARAM_RATE};
 	
 	char write[] = "Status";
 	
@@ -58,9 +59,10 @@ int main(void)
     shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
 */
     // init master
-    i2c_init_master(dev, I2C_SPEED_NORMAL);
+    /*i2c_init_master(dev, I2C_SPEED_NORMAL);
     xtimer_usleep(300*1000);
-
+*/
+    ezo_ph_init(dev, const ezo_ph_params_t *params)
     // write command
   	i2c_write_bytes(dev, address, write, sizeof(write)-1);
   	xtimer_usleep(900*1000);
