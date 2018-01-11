@@ -51,6 +51,9 @@
 
 #include "gcoap_cli.h"
 
+#include "ezo_ph.h"
+#include "ezo_ph_params.h"
+
 
 #define MAIN_QUEUE_SIZE (4)
 
@@ -72,6 +75,10 @@ int main(void)
     // sensors
 	phydat_t temp_read, light_read;
     int dim_temp, dim_light;
+    // ph sensor
+    ezo_ph_t dev;
+    char ph_read[6] = "";
+    
 
     //change lowpan channel to 20
     uint16_t channel=20;
@@ -102,7 +109,8 @@ int main(void)
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
     */
-
+    xtimer_sleep(1);
+    ezo_ph_init(&dev, ezo_ph_params);
     xtimer_sleep(1);
     while(1){
         
@@ -129,10 +137,14 @@ int main(void)
         else{
             strcpy(msg_light, "ok");
         }
+
+        ezo_ph_read_ph(&dev, ph_read);
         
         //to be requested by coap-client
         temp = temp_read;
         light = light_read;
+        strcpy(ph, ph_read);
+        printf("pH Value:%s %s\n", ph_read, ph);
         
         phydat_dump(&temp_read, dim_temp);
         phydat_dump(&light_read, dim_light);
