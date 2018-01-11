@@ -1,12 +1,11 @@
-import { Sensors } from './sensors';
 import { Injectable, Component } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { SensorService } from '../sensor.service';
-import { Sensors } from '../sensors';
-import { ValueService } from '../value.service';
-import { Values } from '../values';
+import { SensorService } from './sensor.service';
+import { Sensors } from './sensors';
+import { ValueService } from './value.service';
+import { Values } from './values';
 
 @Component({
   selector: 'app-root',
