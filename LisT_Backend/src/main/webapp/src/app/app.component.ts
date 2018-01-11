@@ -24,11 +24,11 @@ export class AppComponent {
   }
     private printValuesSensor3(): void {
     this.result = 'loading...';
-    this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
+    this.http.get(`/api/sensors/3/values/`).subscribe(response => this.result = response.text());
   }
     private printValuesSensor4(): void {
     this.result = 'loading...';
-    this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
+    this.http.get(`/api/sensors/4/values/`).subscribe(response => this.result = response.text());
   }
 
   private printSensor(): void {

@@ -3,6 +3,8 @@
  */
 package de.haw.list.actorcomponent;
 
+import java.util.Arrays;
+
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -36,12 +38,18 @@ public class ActorServiceImpl implements ActorService{
 	
 			client2.connect();
 			
+			System.out.println("Verbindung zu Broker hergestellt.");
+			
 			JSONObject jsonObject = new JSONObject();
 			
 			jsonObject.put("actor", actorDto.getTechId());
+			System.out.println("ID hinzugefuegt: " + actorDto.getTechId());
 			jsonObject.put("typ", actorDto.getType());
+			System.out.println("Typ hinzugefuegt: " + actorDto.getType());
 			jsonObject.put("value", actorDto.getValue());
+			System.out.println("Typ hinzugefuegt: " + Arrays.asList(actorDto.getValue()));
 			jsonObject.put("timestamp", actorDto.getTimestamp());
+			System.out.println("Typ hinzugefuegt: " + actorDto.getTimestamp());
 
 			MqttMessage message = new MqttMessage(jsonObject.toString().getBytes());
 			
