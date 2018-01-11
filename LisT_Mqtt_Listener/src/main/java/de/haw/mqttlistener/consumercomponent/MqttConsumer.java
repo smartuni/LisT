@@ -90,14 +90,14 @@ public class MqttConsumer {
                 connected = true;
                 while (connected) { //check connection status
                     try {
-                        //Thread.sleep(5000);
+                        Thread.sleep(500);
                     } catch (Exception e) {}
                 } 
             } catch(MqttException me) {
                 //reconnect on exception
                 System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", me); 
                 try {
-                    //Thread.sleep(5000); 
+                    Thread.sleep(500); 
                 } catch(Exception e) {}
             }
         }
