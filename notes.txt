@@ -1,0 +1,10 @@
+
+update github
+	-readme
+	-manuals
+
+präsi komplett von anfang an
+	-lösungsansätze
+	-jeder einzelne
+	-ausblick
+	-demo

@@ -28,6 +28,8 @@
 #include "fmt.h"
 #include "phydat.h"
 
+#include "random.h"
+
 #include "gcoap_cli.h"
 
 #define ENABLE_DEBUG (0)
@@ -36,23 +38,35 @@
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _blue_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _heat_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+static ssize_t _ledbar_status_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _ledbar_temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+static ssize_t _ledstatus_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _led_red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _led_green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _led_blue_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+static ssize_t _heat_status_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _heatswitch_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _status_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
 /* CoAP resources */
 /* must be in alphabetical order */
 static const coap_resource_t _resources[] = {
-    {"/blue", COAP_GET | COAP_PUT, _blue_handler},
     {"/cli/stats", COAP_GET | COAP_PUT, _stats_handler},
-    {"/green", COAP_GET | COAP_PUT, _green_handler},
-    {"/heat", COAP_GET | COAP_PUT, _heat_handler},
-    {"/red", COAP_GET | COAP_PUT, _red_handler},   
+    {"/heat", COAP_GET , _heat_status_handler},
+    {"/heat/switch", COAP_GET | COAP_PUT, _heatswitch_handler},
+    {"/led", COAP_GET, _ledstatus_handler},
+    {"/led/blue", COAP_GET | COAP_PUT, _led_blue_handler},
+    {"/led/green", COAP_GET | COAP_PUT, _led_green_handler},
+    {"/led/red", COAP_GET | COAP_PUT, _led_red_handler},
     {"/riot/board", COAP_GET, _riot_board_handler},
-    {"/temp", COAP_GET | COAP_PUT, _temp_handler}, 
+    {"/status", COAP_GET, _status_handler},
+    {"/ledbar", COAP_GET, _ledbar_status_handler},
+    {"/ledbar/temp", COAP_GET | COAP_PUT, _ledbar_temp_handler},
 };
 
 static gcoap_listener_t _listener = {
@@ -151,7 +165,83 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
+static ssize_t _status_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    uint8_t i = 0;
+    uint8_t j = 0;
+    uint8_t count = 0;
+    uint8_t max = (uint8_t)_listener.resources_len;
+    char output[200] = "";
+    char ch[1] = "/";
+    signed int check = 0;
+    
+    uint32_t rand_number = random_uint32_range(500000, 5000000); //get random number between 0.5s and 5s
+    xtimer_usleep(rand_number);
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp)
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            printf("max = %d\n", max);
+            
+            sprintf(output+strlen(output), "{\"Res\": [");
+            for(i=0; i<max; i++){
+                for (j = 0; _resources[i].path[j] != '\0'; j++){
+                    if (_resources[i].path[j] == ch[0]){
+                        count++;
+                    }
+                }
+                if(count < 2){      //if less then 2 "/" in string
+                    sprintf(output+strlen(output) ,"\"%s\"", _resources[i].path);
+                
+                    if(i<(max-1)){
+                    sprintf(output+strlen(output), ", ");
+                    }
+                }
+                count = 0;
+
+                
+            }
+            sprintf(output+strlen(output), "]}");
+            
+            size_t payload_len = sprintf((char *)pdu->payload, output);
+
+            check = gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            printf("RETURN = %d\n", check);
+            return check;
+    }
+    
+    return 0;
+}
+
+
+static ssize_t _ledbar_status_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"/led/red\": [\"GET, PUT\"], \"/led/green\": [\"GET, PUT\"], \"/led/blue\": [\"GET, PUT\"], \"message\": \"ok\"}");
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _ledbar_temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 {
     /* read coap method type in packet */
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
@@ -182,7 +272,28 @@ static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _heat_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
+static ssize_t _heat_status_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"/heat/switch\": [\"GET, PUT\"], \"message\": \"ok\"}");
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _heatswitch_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 {
     /* read coap method type in packet */
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
@@ -213,7 +324,28 @@ static ssize_t _heat_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
+static ssize_t _ledstatus_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"/ledbar/temp\": [\"GET, PUT\"], \"message\": \"ok\"}");
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _led_red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 {
     /* read coap method type in packet */
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
@@ -244,7 +376,7 @@ static ssize_t _red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
+static ssize_t _led_green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 {
     /* read coap method type in packet */
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
@@ -275,7 +407,7 @@ static ssize_t _green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _blue_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
+static ssize_t _led_blue_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
 {
     /* read coap method type in packet */
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));

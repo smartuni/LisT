@@ -63,8 +63,8 @@ extern void gcoap_cli_init(void);
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
-};
-*/
+};*/
+
 
 
 int main(void)
@@ -106,37 +106,50 @@ int main(void)
     xtimer_sleep(1);
     while(1){
         
-       //xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
-        puts("Test periodic wakeup");
+        //_send((uint8_t *)"TESTING", sizeof("TESTING"), "ff02::1", "5683");
+        
+        //xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
+        //puts("Test periodic wakeup");
+        
         dim_temp = saul_reg_read(temp_saul, &temp_read);
         dim_light = saul_reg_read(light_saul, &light_read);
         if(dim_temp < 0){
             puts("temp read error");
+            strcpy(msg_temp, "error");
             continue;
+        }
+        else{
+            strcpy(msg_temp, "ok");
         }
         if(dim_light < 0) {
             puts("light read error");
+            strcpy(msg_light, "error");
             continue;
+        }
+        else{
+            strcpy(msg_light, "ok");
         }
         
         //to be requested by coap-client
         temp = temp_read;
         light = light_read;
-        /*
-        puts("Temperatur:");
+        
         phydat_dump(&temp_read, dim_temp);
-        printf("temp.val[0] = %d\n", temp.val[0]);
-        printf("temp.val[1] = %d\n", temp.val[1]);
-        puts("RGB-Licht:");
         phydat_dump(&light_read, dim_light);
-        printf("light.val[0] = %d\n", light.val[0]);
-        printf("light.val[1] = %d\n", light.val[1]);
-        printf("light.val[2] = %d\n", light.val[2]);
-        printf("/cli/stats: %d\n", req_count);
-        printf("-------------------------------------------\n");
-        */
-        xtimer_sleep(10);
-                 
+        
+        if(PRINT_ON_CONSOLE){
+            puts("Temperatur:");
+            printf("temp.val[0] = %d\n", temp.val[0]);
+            printf("temp.val[1] = %d\n", temp.val[1]);
+            puts("RGB-Licht:");
+            printf("light.val[0] = %d\n", light.val[0]);
+            printf("light.val[1] = %d\n", light.val[1]);
+            printf("light.val[2] = %d\n", light.val[2]);
+            printf("/cli/stats: %d\n", req_count);
+            printf("-------------------------------------------\n");
+        }
+        
+        xtimer_sleep(1);
     }
         	
     return 0;

@@ -28,6 +28,8 @@
 #include "fmt.h"
 #include "phydat.h"
 
+#include "random.h"
+
 #include "gcoap_cli.h"
 
 #define ENABLE_DEBUG (0)
@@ -36,17 +38,34 @@
 static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
-static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+static ssize_t _tempstatus_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len);
+static ssize_t _temp_sur_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _temp_amb_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+
+static ssize_t _lightstatus_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _light_red_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _light_green_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _light_blue_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t _status_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
 
 // CoAP resources
 // WARNING: resources must order alphabetically <- from gcoap.h line: 413
 static const coap_resource_t _resources[] = {
     { "/cli/stats", COAP_GET | COAP_PUT, _stats_handler },
-    { "/light", COAP_GET, _lightout_handler},
-    { "/riot/board", COAP_GET, _riot_board_handler },
-    { "/temp", COAP_GET, _temp_handler},
+    { "/light", COAP_GET, _lightstatus_handler},
+    { "/light/blue", COAP_GET, _light_blue_handler},
+    { "/light/green", COAP_GET, _light_green_handler},
+    { "/light/red", COAP_GET, _light_red_handler},
+    { "/riot/board", COAP_GET, _riot_board_handler},
+    { "/status", COAP_GET, _status_handler},
+    { "/temp", COAP_GET, _tempstatus_handler},
+    { "/temp/ambient", COAP_GET, _temp_amb_handler},
+    { "/temp/surface", COAP_GET, _temp_sur_handler},
 };
 
 static gcoap_listener_t _listener = {
@@ -62,6 +81,9 @@ uint16_t req_count2 = 0;
 //data variables
 phydat_t temp = { .val = {0}, .unit = 0, .scale = 0};
 phydat_t light = { .val = {0}, .unit = 0, .scale = 0};
+
+char msg_temp[10] = "ok";
+char msg_light[10] = "ok";
 
 /*
  * Response callback.
@@ -144,26 +166,147 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
     return 0;
 }
 
-static ssize_t _temp_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+static ssize_t _status_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
 {
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
-
+    uint8_t i = 0;
+    uint8_t j = 0;
+    uint8_t count = 0;
+    uint8_t max = (uint8_t)_listener.resources_len;
+    char output[200] = "";
+    char ch[1] = "/";
+    signed int check = 0;
+    
+    uint32_t rand_number = random_uint32_range(500000, 5000000); //get random number between 0.5s and 5s
+    xtimer_usleep(rand_number);
+    
     switch(method_flag) {
         case COAP_GET:
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-            /* write the response buffer with the requested data (temp) */
+            // write the response buffer with the requested data (temp)
             //NOTE: signed value for data
-            size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            printf("max = %d\n", max);
+            
+            sprintf(output+strlen(output), "{\"Res\": [");
+            for(i=0; i<max; i++){
+                for (j = 0; _resources[i].path[j] != '\0'; j++){
+                    if (_resources[i].path[j] == ch[0]){
+                        count++;
+                    }
+                }
+                if(count < 2){
+                    sprintf(output+strlen(output) ,"\"%s\"", _resources[i].path);
+                
+                    if(i<(max-1)){
+                    sprintf(output+strlen(output), ", ");
+                    }
+                }
+                count = 0;
 
-            return gcoap_finish(pdu, payload_len, COAP_FORMAT_TEXT);
+                
+            }
+            sprintf(output+strlen(output), "]}");
+            
+            /*
+            sprintf(output+strlen(output), "{");
+            for(i=0; i< max; i++){
+                sprintf(output+strlen(output) ,"\"%s\": [", _resources[i].path);
+                if(_resources[i].methods & COAP_GET){
+                    sprintf(output+strlen(output), "\"GET\"");
+                }
+                if((_resources[i].methods & COAP_PUT) && (_resources[i].methods & COAP_GET)){
+                    sprintf(output+strlen(output), ", \"PUT\"");
+                }
+                else if(_resources[i].methods & COAP_PUT){
+                    sprintf(output+strlen(output), "\"PUT\"");
+                }
+                if(i<(max-1)){
+                    sprintf(output+strlen(output), "], ");
+                } else {
+                    sprintf(output+strlen(output), "]");
+                }
+                
+            }
+            sprintf(output+strlen(output), "}");
+            */
+            
+            size_t payload_len = sprintf((char *)pdu->payload, output);
 
+            check = gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            printf("RETURN = %d\n", check);
+            return check;
     }
-
+    
     return 0;
 }
 
-static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+static ssize_t _tempstatus_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"/temp/ambient\": [\"GET\"], \"/temp/surface\": [\"GET\"], \"message\": \"ok\"}");
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _temp_amb_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"ambientTemp\": %d, \"message\": \"%s\"}", temp.val[1], msg_temp);            
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _temp_sur_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+            // write the response buffer with the requested data (temp) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, temp.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"surfaceTemp\": %d, \"message\": \"%s\"}", temp.val[0], msg_temp);
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+
+    }
+    
+    return 0;
+}
+
+static ssize_t _lightstatus_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
 {
     unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
     
@@ -171,11 +314,80 @@ static ssize_t _lightout_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
         case COAP_GET:
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
             
-            /* write the response buffer with the requested data (light) */
+            // write the response buffer with the requested data (light) 
             //NOTE: signed value for data
             //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
             
-            size_t payload_len = sprintf((char *)pdu->payload, "{'red': %d, 'green': %d, 'blue:' %d}", light.val[0], light.val[1], light.val[2]);
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"/light/red\": [\"GET\"], \"/light/green\": [\"GET\"], \"/light/blue\": [\"GET\"], \"message\": \"ok\"}");
+
+            //memcpy(pdu->payload, light.val, sizeof(light.val));
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            //return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
+    }
+
+    return 0;
+}
+
+static ssize_t _light_red_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+            
+            // write the response buffer with the requested data (light) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"red\": %d, \"message\": \"%s\"}", light.val[0], msg_light);
+
+            //memcpy(pdu->payload, light.val, sizeof(light.val));
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            //return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
+    }
+
+    return 0;
+}
+
+static ssize_t _light_green_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+            
+            // write the response buffer with the requested data (light) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"green\": %d, \"message\": \"%s\"}", light.val[1], msg_light);
+
+            //memcpy(pdu->payload, light.val, sizeof(light.val));
+
+            return gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+            //return gcoap_finish(pdu, sizeof(light.val), COAP_FORMAT_TEXT);
+    }
+
+    return 0;
+}
+
+static ssize_t _light_blue_handler(coap_pkt_t* pdu, uint8_t* buf, size_t len)
+{
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+    
+    switch(method_flag) {
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+            
+            // write the response buffer with the requested data (light) 
+            //NOTE: signed value for data
+            //size_t payload_len = fmt_s16_dec((char *)pdu->payload, light.val[0]);
+            
+            size_t payload_len = sprintf((char *)pdu->payload, "{\"blue\": %d, \"message\": \"%s\"}", light.val[2], msg_light);
 
             //memcpy(pdu->payload, light.val, sizeof(light.val));
 
@@ -194,7 +406,8 @@ static ssize_t _riot_board_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len)
     return gcoap_finish(pdu, strlen(RIOT_BOARD), COAP_FORMAT_TEXT);
 }
 
-static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
+//static 
+size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
 {
     ipv6_addr_t addr;
     size_t bytes_sent;
