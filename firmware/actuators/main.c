@@ -54,6 +54,9 @@
 #include "grove_ledbar.h"
 #include "grove_ledbar_params.h"
 
+// Timer
+#include "timex.h"
+
 // heating
 #include "periph/gpio.h"
 
@@ -67,12 +70,12 @@
 
 #define MAIN_QUEUE_SIZE (4)
 
-/*
+
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
 extern int gcoap_cli_cmd(int argc, char **argv);
 extern void gcoap_cli_init(void);
-
+/*
 static const shell_command_t shell_commands[] = {
     { "coap", "CoAP example", gcoap_cli_cmd },
     { NULL, NULL, NULL }
@@ -89,14 +92,14 @@ int main(void)
     gnrc_netapi_set(ifs[0], NETOPT_CHANNEL, 0, &channel, sizeof(channel));
     
     /* for the thread running the shell */
-    /*msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
+    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     gcoap_cli_init();
     // 6LoWpan init
     gnrc_sixlowpan_init();
-    */
+    
 
     // RGB values
-    uint8_t red = 0, green = 0, blue = 0;
+    //uint8_t red = 0, green = 10, blue = 10;
     rgbled_t led;
     color_rgb_t color = {red, green, blue};
     rgbled_init(&led, PWM_DEV(1), 0, 1, 2);
@@ -149,6 +152,7 @@ int main(void)
         //heating
         if(!heat){
             gpio_clear(GPIO_PIN(0,23));
+            
         }else{
             gpio_set(GPIO_PIN(0,23));
         }

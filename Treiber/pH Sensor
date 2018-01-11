@@ -1,0 +1,10 @@
+AtlasScientific EZO^TM pH Circuit sensor
+
+-> ezo_ph.h
+erledigt:	- umbenannt
+zu tun:		- Beschreibung in den Header einfügen
+		- Variablen prüfen (welche werden benötigt und welche nciht)
+		- Kalibirerungs Makros prüfen
+
+-> ezo_ph_params.h
+erledigt:	- umbenannt
