@@ -19,13 +19,13 @@
 		<br/>
 <ul class="sensors">
   <li *ngFor="let sensor of allSensors">
-      <span class="badge">{{sensor.id}}</span> {{sensor.name}} {{sensor.type}} {{sensor.location}}
+      <span class="badge">{{sensor.id}}</span> "Sensor Name: "{{sensor.name}} "Sensor Type: {{sensor.type}} "Sensor Location: {{sensor.location}}
   </li>
 </ul>
 
 <ul class="values">
   <li *ngFor="let value of values">
-      <span class="badge">{{value.id}}</span> {{value.sensorId}} {{value.values}} {{value.timestamp}}
+      <span class="badge">{{value.id}}</span>"Sensor ID: " {{value.sensorId}} "Sensor Value:  {{value.values}} "Sensor Timestamp: {{value.timestamp}}
   </li>
 </ul>
 		
