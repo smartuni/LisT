@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<app-toolbar></app-toolbar>
+<router-outlet></router-outlet>
+
 <html lang="en">
 	<head>
 		<meta charset="UFT-8">
@@ -22,7 +25,7 @@
 </ul>
 
 <ul class="values">
-  <li *ngFor="let value of value">
+  <li *ngFor="let value of values">
       <span class="badge">{{value.id}}</span> {{value.values}} {{value.timestamp}}
   </li>
 </ul>
