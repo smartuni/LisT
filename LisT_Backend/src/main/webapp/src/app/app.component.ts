@@ -1,7 +1,6 @@
-import { Injectable } from "@angular/core";
-import { Component } from '@angular/core';
+import { Injectable, Component } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +12,7 @@ export class AppComponent {
   result = '';
 
   constructor(
-    private http: Http){
-  }
+    private http: Http) { }
 
   private printValuesSensor1(): void {
     this.result = 'loading...';
@@ -32,7 +30,7 @@ export class AppComponent {
     this.result = 'loading...';
     this.http.get(`/api/sensors/2/values/`).subscribe(response => this.result = response.text());
   }
-  
+
   private printSensor(): void {
     this.result = 'loading...';
     this.http.get(`/api/sensors`).subscribe(response => this.result = response.text());

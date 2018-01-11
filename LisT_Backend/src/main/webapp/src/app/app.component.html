@@ -15,8 +15,17 @@
 		<br/>
 		<br/>
 		<br/>
-		<div><pre>{{result}}</pre></div>
-		<div><span>id: </span>{{sensors.id}}</div>
+<ul class="sensors">
+  <li *ngFor="let sensor of sensors">
+      <span class="badge">{{sensor.id}}</span> {{sensor.name}}
+  </li>
+</ul>
+
+<ul class="values">
+  <li *ngFor="let value of values">
+      <span class="badge">{{value.id}}</span> {{value.values}} {{value.timestamp}}
+  </li>
+</ul>
 		
 	</body>
 </html>

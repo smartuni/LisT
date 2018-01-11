@@ -36,12 +36,6 @@
           }
         });
 
-        self.items = [
-          { name: "Twitter", icon: "fish.ico", direction: "bottom" },
-          { name: "Facebook", icon: "fish.ico", direction: "top" },
-          { name: "Google Hangout", icon: "fish.ico", direction: "bottom" }
-        ];
-
         self.openDialog = function($event, item) {
           // Show the dialog
           $mdDialog.show({
@@ -77,18 +71,6 @@
 
 <div layout="column" ng-controller="DemoCtrl as demo" ng-cloak="" class="fabSpeedDialdemoMoreOptions" ng-app="MyApp">
   <md-content class="md-padding" layout="column">
-
-    <md-toolbar>
-      <h3>
-        <md-button>Test</md-button>
-        <md-button>Test</md-button>
-        <md-button hide-sm="">Test</md-button>
-        <md-button hide-sm="">Test</md-button>
-        <md-button hide-sm="">Test</md-button>
-        <md-button hide-sm="">Test</md-button>
-        <md-button hide-sm="">Test</md-button>
-      </h3>
-    </md-toolbar>
 
     <md-fab-speed-dial ng-hide="demo.hidden" md-direction="left" md-open="demo.isOpen" class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': demo.hover }" ng-mouseenter="demo.isOpen=true" ng-mouseleave="demo.isOpen=false">
       <md-fab-trigger>
