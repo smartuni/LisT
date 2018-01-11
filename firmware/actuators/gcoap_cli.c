@@ -310,10 +310,13 @@ static ssize_t _heatswitch_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len)
         case COAP_PUT:
             /* convert the payload to an integer and update the internal
                value */
+            printf("HEAT_PUT\n");
+            
             if (pdu->payload_len <= 5) {
                 char payload[6] = { 0 };
                 memcpy(payload, (char *)pdu->payload, pdu->payload_len);
                 heat = (uint16_t)strtoul(payload, NULL, 10);
+                printf("Value: %d\n", heat);
                 return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
             }
             else {
