@@ -12,7 +12,19 @@ export class ValueService {
 
   constructor(private http: HttpClient) { }
 
-  getValues(): Observable<any> {
-  return this.http.get(this.baseUrl + '/sensors/${id}/values');
+  getValue1(): Observable<any> {
+  return this.http.get(this.baseUrl + '/sensors/1/values');
+  }
+
+    getValue2(): Observable<any> {
+  return this.http.get(this.baseUrl + '/sensors/2}/values');
+  }
+
+    getValue3(): Observable<any> {
+  return this.http.get(this.baseUrl + '/sensors/3/values');
+  }
+
+    getValue4(): Observable<any> {
+  return this.http.get(this.baseUrl + '/sensors/4/values');
   }
 }
