@@ -1,8 +1,12 @@
+import { Sensors } from './sensors';
 import { Injectable, Component } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-
+import { SensorService } from '../sensor.service';
+import { Sensors } from '../sensors';
+import { ValueService } from '../value.service';
+import { Values } from '../values';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +14,15 @@ import { Observable } from 'rxjs/Observable';
   styleUrls: ['./app.component.css']
   })
 export class AppComponent {
-  allSensors: Response;
+  allSensors: Sensors[];
   value: Response;
   title = 'Smartes Aquarium';
   result = '';
 
   constructor(
-    private http: Http) { }
+    private http: Http,
+    private sensorService: SensorService,
+    private valueService: ValueService) { }
 
   private printValuesSensor1(): void {
     this.result = 'loading...';
@@ -36,9 +42,10 @@ export class AppComponent {
   }
 
   private printSensor(): void {
-    this.result = 'loading...';
+    this.sensorService.getSensors()
+    .subscribe(sensors => this.allSensors = sensors);
     // this.http.get(`/api/sensors`).subscribe(response => this.result = response.text()); response => this.result = response.text()
-    this.http.get('api/sensors').subscribe(sensors => this.allSensors = sensors);
+
   }
 
 
