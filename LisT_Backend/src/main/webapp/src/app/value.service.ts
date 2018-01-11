@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class ValueService {
-  public baseUrl = 'http://141.22.28.86:8181/api';
+  public baseUrl = 'http://141.22.28.86:8080/api';
 
   constructor(private http: HttpClient) { }
 
