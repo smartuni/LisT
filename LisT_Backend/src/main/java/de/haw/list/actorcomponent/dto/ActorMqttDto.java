@@ -60,6 +60,21 @@ public class ActorMqttDto {
 	public String getTimestamp() {
 		return timestamp;
 	}
+
+	@Override
+	public String toString() {
+		return "ActorMqttDto [techId=" 
+				+ techId 
+				+ ", type=" 
+				+ type 
+				+ ", value=" 
+				+ value 
+				+ ", timestamp=" 
+				+ timestamp
+				+ "]";
+	}
+	
+	
 	
 	
 	

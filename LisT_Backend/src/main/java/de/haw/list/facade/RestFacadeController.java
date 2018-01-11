@@ -200,6 +200,7 @@ public class RestFacadeController implements ErrorController {
 	@RequestMapping(value = "/api/actor", method = RequestMethod.PUT)
 	public ResponseEntity<?> setActor(@RequestBody ActorMqttDto actorDto) {
 		try {
+			System.out.println(actorDto.toString());
 			actorService.setActor(actorDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
