@@ -143,13 +143,13 @@ public final class SensorPersistenceServiceImpl implements SensorPersistenceServ
 
 		if (values.size() == 1) {
 			sensorValue = new SensorValue(sensorOptional.get(), values.get(0), 0.0, 0.0, dateTime);
-			logRepo.save(new Log("1 Value"));
+			logRepo.save(new Log("1 Value: " + values.get(0)));
 		} else if (values.size() == 2) {
 			sensorValue = new SensorValue(sensorOptional.get(), values.get(0), values.get(1), 0.0, dateTime);
-			logRepo.save(new Log("2 Value"));
+			logRepo.save(new Log("2 Value: " + values.get(0) + " " + values.get(1)));
 		} else if (values.size() == 3) {
 			sensorValue = new SensorValue(sensorOptional.get(), values.get(0), values.get(1), values.get(2), dateTime);
-			logRepo.save(new Log("3 Value"));
+			logRepo.save(new Log("2 Value: " + values.get(0) + " " + values.get(1) + " " + values.get(2)));
 		} else {
 			logRepo.save(new Log("Fehler bei den Values"));
 		}
