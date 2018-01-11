@@ -16,13 +16,13 @@
 		<br/>
 		<br/>
 <ul class="sensors">
-  <li *ngFor="let sensor of sensors">
+  <li *ngFor="let sensor of allSensors">
       <span class="badge">{{sensor.id}}</span> {{sensor.name}}
   </li>
 </ul>
 
 <ul class="values">
-  <li *ngFor="let value of values">
+  <li *ngFor="let value of value">
       <span class="badge">{{value.id}}</span> {{value.values}} {{value.timestamp}}
   </li>
 </ul>
