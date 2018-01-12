@@ -19,6 +19,6 @@ export class ActorService {
 
   putTemp(temp: Actors): Observable<any> {
     return this.http
-      .put(this.baseUrl + '/actor/3/values', temp, httpOptions);
+      .put(this.baseUrl + '/actor/3/values', JSON.stringify(temp), httpOptions);
   }
 }
