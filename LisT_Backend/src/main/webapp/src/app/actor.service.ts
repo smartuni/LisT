@@ -3,6 +3,7 @@ import {Values} from './values';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Http, Response} from '@angular/http';
+import { Data } from '@angular/router';
 
 import {Observable} from 'rxjs/Observable';
 
@@ -18,7 +19,8 @@ export class ActorService {
   constructor(private http: HttpClient) {}
 
   putTemp(temp: Actors): Observable<any> {
+   const data = JSON.stringify({temp});
     return this.http
-      .put(this.baseUrl + '/actor/3/values', JSON.stringify(temp), httpOptions);
+      .put(this.baseUrl + '/actor/3/values', data, httpOptions);
   }
 }
