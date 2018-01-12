@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { ValueService } from '../value.service';
+import { Values } from '../values';
 
 @Component({
   selector: 'app-options',
@@ -7,9 +10,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OptionsComponent implements OnInit {
 
-  constructor() { }
+
+  resopnse: any;
+  title: 'Options';
+  temperature: 'Temperature';
+  @Input() temp: Values;
+
+  constructor(
+  private valueService: ValueService
+  ) { }
 
   ngOnInit() {
+  }
+
+  private tempSwitch(): void {
+    this.valueService.putTemp(this.temp)
+      .subscribe();
   }
 
 }
