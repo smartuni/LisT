@@ -1,6 +1,6 @@
 export class Values {
   id: number;
   timestamp: any;
-  values: Array<number>;
+  valueAry: Array<number>;
   sensorId: number;
 }
