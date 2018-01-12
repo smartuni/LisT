@@ -5,10 +5,6 @@ import {Http, Response} from '@angular/http';
 
 import {Observable} from 'rxjs/Observable';
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
-
 @Injectable()
 export class ValueService {
   public baseUrl = 'http://141.22.28.86:8080/api';
@@ -31,8 +27,5 @@ export class ValueService {
     return this.http.get(this.baseUrl + '/sensors/4/values');
   }
 
-  putTemp(temp: Values): Observable<any> {
-    return this.http
-      .put(this.baseUrl + '/sensors/3/values', temp, httpOptions);
-  }
+
 }
