@@ -2,6 +2,7 @@ import { ActorService } from '../actor.service';
 import { Actors } from '../actors';
 import { Component, OnInit, Input } from '@angular/core';
 
+
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',
