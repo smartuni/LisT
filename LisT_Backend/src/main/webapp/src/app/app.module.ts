@@ -20,6 +20,7 @@ import { OptionsComponent } from './options/options.component';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    FormsModule
   ],
   providers: [
     SensorService,
