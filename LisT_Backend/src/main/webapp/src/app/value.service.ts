@@ -31,7 +31,7 @@ export class ValueService {
     return this.http.get(this.baseUrl + '/sensors/4/values');
   }
 
-  putTemp(temp: Values) {
+  putTemp(temp: Values): Observable<any> {
     return this.http
       .put(this.baseUrl + '/sensors/3/values', temp, httpOptions);
   }

@@ -9,10 +9,8 @@
 	<h1>{{title}}</h1>
 
 	<form>
-		<label>{{temp}}</label>
-		<div class="form-group">
-			<input [(ngModel)]="value.values" placeholder="20" />
-		</div>
+		<label>{{temperature}}</label>
+			<input [(ngModel)]="value.valueAry" placeholder="20" />
 		<button (click)="tempSwitch()">save Temperature</button>
 	</form>
 
