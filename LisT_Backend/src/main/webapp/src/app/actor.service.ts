@@ -18,9 +18,9 @@ export class ActorService {
 
   constructor(private http: HttpClient) {}
 
-  putTemp(temp: Actors): Observable<any> {
+  putTemp(temp: Actors): void {
    const data = JSON.stringify({temp});
-    return this.http
-      .put(this.baseUrl + '/actor/3/values', data, httpOptions);
+    console.log(this.http
+      .put(this.baseUrl + '/actor/3/values', data, httpOptions));
   }
 }

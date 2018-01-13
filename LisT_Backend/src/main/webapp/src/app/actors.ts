@@ -1,4 +1,5 @@
 import {sensors_enum} from './sensors_enum';
+
 export class Actors {
   constructor(
     public timestamp: any,
