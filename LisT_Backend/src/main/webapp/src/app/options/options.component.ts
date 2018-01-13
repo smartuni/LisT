@@ -28,15 +28,21 @@ export class OptionsComponent implements OnInit {
   dateNow = this.date.getTime();
   data1 = {techId: 's1', sensorType: 'TEMP', value: this.temp, timestamp: this.dateNow};
 
+  dataTest = {techId: 's1', sensorType: 'TEMP', value: [25, 0 , 0 ], timestamp: this.dateNow};
+
   constructor(
   private actorService: ActorService,
     private http: HttpClient) { }
 
   ngOnInit() {
+    this.tempLog();
   }
 
   private tempSwitch(): Observable<any> {
    return this.http.put(this.baseUrl + '/actor/3/values', this.data1, httpOptions);
   }
 
+  private tempLog(): void {
+    console.log(this.http.put(this.baseUrl + '/actor/3/values', this.dataTest, httpOptions));
+  }
 }
