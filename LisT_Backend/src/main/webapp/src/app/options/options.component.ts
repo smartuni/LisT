@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { DatePipe } from '@angular/common';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,33 +17,51 @@ const httpOptions = {
 })
 export class OptionsComponent implements OnInit {
 
-
-  resopnse: any;
-  title: 'Options';
-  temperature: 'Temperature';
-  light: 'Light';
-
   baseUrl = 'http://141.22.28.86:8080/api';
   @Input() temp: Actors;
-  date: Date = new Date();
-  dateNow = this.date.getTime();
-  data1 = {techId: 's1', sensorType: 'TEMP', value: this.temp, timestamp: this.dateNow};
 
-  dataTest = {techId: 's1', sensorType: 'TEMP', value: [25, 0 , 0 ], timestamp: this.dateNow};
+  dateFormat = new Date('2018-1-14 13:50').getTime;
+
+  data1 = {techId: 's1', sensorType: 'TEMP', value: this.temp, timestamp: this.dateFormat};
+  dataTest = {techId: 's1', sensorType: 'TEMP', value: [this.temp], timestamp: this.dateFormat};
+
+  red = {techID: 's3', sensorType: 'LIGHT', value: [255, 0 , 0 ], timestamp: this.dateFormat};
+    blue = {techID: 's3', sensorType: 'LIGHT', value: [0 , 0 , 255 ], timestamp: this.dateFormat};
+    green = {techID: 's3', sensorType: 'LIGHT', value: [0, 255 , 0 ], timestamp: this.dateFormat};
+    white = {techID: 's3', sensorType: 'LIGHT', value: [255, 255 , 255 ], timestamp: this.dateFormat};
+
 
   constructor(
   private actorService: ActorService,
     private http: HttpClient) { }
 
   ngOnInit() {
-    this.tempLog();
   }
 
   private tempSwitch(): Observable<any> {
-   return this.http.put(this.baseUrl + '/actor/3/values', this.data1, httpOptions);
+   return this.http.put(this.baseUrl + '/actor/1/values', this.data1, httpOptions);
   }
 
   private tempLog(): void {
-    console.log(this.http.put(this.baseUrl + '/actor/3/values', this.dataTest, httpOptions));
+    console.log(this.http.put(this.baseUrl + '/actor/2/values', this.dataTest, httpOptions));
   }
+
+  private lightRed():  void {
+    this.http.put(this.baseUrl + '/actor/3', this.red, httpOptions);
+  }
+
+    private lightBlue():  Observable<any> {
+    return this.http.put(this.baseUrl + '/actor/3', this.blue, httpOptions);
+  }
+
+    private lightGreen():  Observable<any> {
+    return this.http.put(this.baseUrl + '/actor/3', this.green, httpOptions);
+  }
+
+    private lightWhite():  Observable<any> {
+    return this.http.put(this.baseUrl + '/actor/3', this.white, httpOptions);
+  }
+
 }
+
+

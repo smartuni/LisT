@@ -10,12 +10,14 @@ import {HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing.module';
 import {ToolbarComponent} from './toolbar/toolbar.component';
 import {OptionsComponent} from './options/options.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ToolbarComponent,
-    OptionsComponent
+    OptionsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

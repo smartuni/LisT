@@ -1,21 +1,31 @@
 <!DOCTYPE html>
-<app-toolbar></app-toolbar>
+
 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 </head>
+
 <body>
-	<h1>{{title}}</h1>
-
-	<form>
-		<label>{{temperature}}</label>
-			<input [(ngModel)]="actors.value" placeholder="20" />
+<h1>Options</h1>	
+<br>
+	<div>
+		<label>Temperature: </label> <input [(ngModel)]="actors.value"
+			placeholder="20" />
 		<button (click)="tempSwitch()">Save</button>
-	</form>
-
-
-	<label>{{light}}</label>
-
+	</div>
+<br>
+<br>
+<br>
+<div>
+	<label>Light: </label>
+	<button (click)="lightRed()">Red</button>
+	<button (click)="lightBlue()">Blue</button>
+	<button (click)="lightGreen()">Green</button>
+	<button (click)="lightWhite()">White</button>
+	<br>
+	<br>
+	<span>{{dateFormat}}</span>
+</div>
 
 </body>
