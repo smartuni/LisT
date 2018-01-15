@@ -87,12 +87,12 @@ public class MqttConsumer {
                 onMessage callback = new onMessage();
                 client.setCallback(callback);
                 client.subscribe(topic, 1); //qos=1
-//                connected = true;
-//                while (connected) { //check connection status
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (Exception e) {}
-//                } 
+                connected = true;
+                while (connected) { //check connection status
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {}
+                } 
             } catch(MqttException me) {
                 //reconnect on exception
                 System.out.printf("Exception handled, reconnecting...\nDetail:\n%s\n", me); 
