@@ -57,18 +57,18 @@ public class ListApplication extends SpringBootServletInitializer implements Com
 		
 		
 		
-		SensorValue sv1 = new SensorValue(sensor1, 10.0, 0.0, 0.0, LocalDateTime.now());
+//		SensorValue sv1 = new SensorValue(sensor1, 10.0, 0.0, 0.0, LocalDateTime.now());
+//		
+//		SensorValue sv2 = new SensorValue(sensor2, 12.0, 0.0, 0.0, LocalDateTime.now());
+//		SensorValue sv3 = new SensorValue(sensor2, 13.0, 0.0, 0.0, LocalDateTime.now());
+//		SensorValue sv4 = new SensorValue(sensor2, 14.0, 0.0, 0.0, LocalDateTime.now());
+//		
+//		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4));
 		
-		SensorValue sv2 = new SensorValue(sensor2, 12.0, 0.0, 0.0, LocalDateTime.now());
-		SensorValue sv3 = new SensorValue(sensor2, 13.0, 0.0, 0.0, LocalDateTime.now());
-		SensorValue sv4 = new SensorValue(sensor2, 14.0, 0.0, 0.0, LocalDateTime.now());
-		
-		sensorValueRepo.save(Arrays.asList(sv1, sv2, sv3, sv4));
-		
-		Log log1 = new Log("test");
-		Log log2 = new Log("test2");
-		
-		logRepo.save(Arrays.asList(log1, log2));
+//		Log log1 = new Log("test");
+//		Log log2 = new Log("test2");
+//		
+//		logRepo.save(Arrays.asList(log1, log2));
 		
 	}
 	
