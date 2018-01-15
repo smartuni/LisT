@@ -50,7 +50,9 @@ Information on which pins to connect to what external hardware please see ..... 
 
 ### Flashing the hardware 
 
-* To find details on flashing the sensor and actuator nodes please see the folder called "firmware".
+* To find details on flashing the sensor and actuator nodes please see the folder called "LisT_Firmware".
+* -> https://github.com/smartuni/LisT/tree/master/LisT_Firmware
+
 * To find information on setting up the raspberry pi please view the contents of folder "LisT_Gateway"
 * -> https://github.com/smartuni/LisT/tree/master/LisT_Gateway
 
