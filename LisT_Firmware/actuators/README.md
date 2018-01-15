@@ -17,9 +17,9 @@ make all flash term SERIAL=<serialnumber the previous cmd returned>
 ```
 
 
-##Connect your Board to the actuators as follwoing:
+## Connect your Board to the actuators as follwoing:
 
-####SAMR21 for the LED strip:
+#### SAMR21 for the LED strip:
 
 * RGB-LED-R: PA16
 * RGB-LED-G: PA18
@@ -27,7 +27,7 @@ make all flash term SERIAL=<serialnumber the previous cmd returned>
 
 -> connect GND with the GND Board of the LED-Band
 
-####LED bar:
+#### LED bar:
 
 * VCC: EXT1 VCC
 * GND: EXT1 GND oder EXT2 GND
@@ -36,7 +36,7 @@ make all flash term SERIAL=<serialnumber the previous cmd returned>
 		
 * LED bar steps: 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255 (from 18 to 28 degree celsius)
 
-####Heating element:
+#### Heating element:
 
 -> SwitchBox with RS232 cable
 * GND: Ext1 GND oder EXT2 GND (red, Pin 8)
