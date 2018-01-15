@@ -1,9 +1,7 @@
 //############ Run Parameters ##########################################################################################
-
-var argv = require('minimist')(process.argv.slice(2));
+let argv = require('minimist')(process.argv.slice(2));
 
 if (argv.help) {
-
     console.log("Parameter description:");
     console.log("");
     console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
@@ -11,10 +9,8 @@ if (argv.help) {
     console.log("--logLevel             debug , info ");
     console.log("");
     console.log("--mqtt                 Something like mqtt://141.22.28.86 ");
-
     process.exit(0);
 }
-
 
 //var logLevel = 'debug';
 
@@ -48,27 +44,8 @@ var Frontend = {
     }
 };
 
-// var sensorNodes = [{
 //     hostname: "fe80::abc0:6e7a:7427:322%lowpan0",
-//     supportedPaths: [
-//         {
-//             path: "/temp",
-//             typ: "GET",
-//
-//         }, {
-//             path: "/light/rgb",
-//             typ: "GET",
-//
-//         }],
-// }, {
 //     hostname: "fe80::7b62:1b6d:89cc:89ca%lowpan0",
-//     supportedPaths: [
-//         {
-//             path: "/temp",
-//             typ: "GET",
-//
-//         }, "/light"],
-// }];
 
 
 var sensorNodeNew = [{
@@ -103,6 +80,16 @@ var sensorNodeNew = [{
             message: ""
         }, {
             name: "/blue",
+            typ: "GET",
+            value: "",
+            message: ""
+        }]
+
+    }, {
+        name: "/ph",
+        typ: "GET",
+        paths: [{
+            name: "/value",
             typ: "GET",
             value: "",
             message: ""
@@ -145,8 +132,12 @@ var sensorNode = [{
         typ: "GET",
         value: "",
         message: ""
-    }
-    ],
+    }, {
+        path: "/ph/value",
+        typ: "GET",
+        value: "",
+        message: ""
+    }],
     //hostname: "ff02::1",
 }];
 
@@ -174,12 +165,12 @@ var actorNode = [{
         value: "",
         message: ""
     }, {
-        path: "/heatswitch",
+        path: "/heat/switch",
         typ: "PUT",
         value: "",
         message: ""
     }],
-    //hostname: "ff02::1",
+    //hostname: "ff02::1%lowpan0",
 }];
 
 
@@ -197,6 +188,11 @@ var frontendData = [{
 }, {
     sensor: 's3',
     typ: 'light',
+    value: [],
+    timestamp: '',
+}, {
+    sensor: 's4',
+    typ: 'ph',
     value: [],
     timestamp: '',
 }];
@@ -286,29 +282,35 @@ var coap = require('coap');
 
 
 var productionInterval = setInterval(function () {
-    updateToActors();
-    // updateFromSensors()
-    //
-    //     .then(function () {
-    //         log.debug("Sensor update successful");
-    //         return calculate();
-    //     })
-    //
-    //     .then(function () {
-    //         log.debug("Calculation successful");
-    //         return updateToActors();
-    //     })
-    //
-    //     .then(function () {
-    //         log.debug("Actor update successful");
-    //         return updateFrontend();
-    //     })
-    //
-    //     .catch(function (error) {
-    //         log.debug("Production interval faild with error: " + error);
-    //     });
 
-}.bind(this), 5000);
+    // coapRequest("ff02::1%lowpan0", "/heat", 'GET', 0, function (result) {
+    //
+    //     console.log(result);
+    // })
+
+
+    updateFromSensors()
+
+        .then(function () {
+            log.debug("Sensor update successful");
+            return calculate();
+        })
+
+        .then(function () {
+            log.debug("Calculation successful");
+            return updateToActors();
+        })
+
+        .then(function () {
+            log.debug("Actor update successful");
+            return updateFrontend();
+        })
+
+        .catch(function (error) {
+            log.debug("Production interval faild with error: " + error);
+        });
+
+}.bind(this), 10000);
 
 
 if (logLevel === 'info') {
@@ -332,37 +334,29 @@ function updateFrontend() {
 
     return new Promise(function (resolve, reject) {
         if (Frontend.status === "connected") {
-            // let d = new Date();
-            // frontendData.timestamp = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
 
+            let d = new Date();
+            frontendData.timestamp = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
 
-            // frontendData.value.length = 0;
-            // frontendData.value.push(Math.floor(Math.random() * 30) + 10);
+            var interval = 2000; // how much time should the delay between two iterations be (in milliseconds)?
+            var innerPromise = Promise.resolve();
 
+            frontendData.forEach(function (data,) {
+                innerPromise = innerPromise.then(function () {
+                    Frontend.client.publish(Frontend.publishTopic, JSON.stringify(data), function (error) {
+                        if (error) {
+                            reject(error)
+                        } else {
+                            log.debug("Data: " + JSON.stringify(data), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
+                            resolve();
+                        }
+                    });
 
-            // var interval = 5000; // how much time should the delay between two iterations be (in milliseconds)?
-            // var innerPromise = Promise.resolve();
-            //
-            // frontendData.forEach(function (frontendData,) {
-            //     innerPromise = innerPromise.then(function () {
-            //
-            //         Frontend.client.publish(Frontend.publishTopic, JSON.stringify(frontendData), function (error) {
-            //
-            //             if (error) {
-            //                 reject(error)
-            //
-            //             } else {
-            //                 log.debug("Data: " + JSON.stringify(frontendData), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
-            //                 resolve();
-            //             }
-            //
-            //         });
-            //
-            //         return new Promise(function (resolve) {
-            //             setTimeout(resolve, interval);
-            //         });
-            //     });
-            // });
+                    return new Promise(function (resolve) {
+                        setTimeout(resolve, interval);
+                    });
+                });
+            });
 
 
             // innerPromise.then(function () {
@@ -372,17 +366,19 @@ function updateFrontend() {
 
             // frontendData.forEach(function (frontendData,index) {
             //
-            Frontend.client.publish(Frontend.publishTopic, JSON.stringify(frontendData[0]), function (error) {
 
-                if (error) {
-                    reject(error)
 
-                } else {
-                    log.debug("Data: " + JSON.stringify(frontendData[0]), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
-                    resolve();
-                }
-
-            });
+            // Frontend.client.publish(Frontend.publishTopic, JSON.stringify(frontendData[0]), function (error) {
+            //
+            //     if (error) {
+            //         reject(error)
+            //
+            //     } else {
+            //         log.debug("Data: " + JSON.stringify(frontendData[0]), " send to " + Frontend.url + ":" + Frontend.port + " via: " + Frontend.publishTopic);
+            //         resolve();
+            //     }
+            //
+            // });
             // });
 
 
@@ -422,23 +418,16 @@ function calculate() {
 
     return new Promise(function (resolve, reject) {
 
-        //frontendData.temperature = sensorNode.surfaceTemp;
-        //frontendData.light = sensorNode.lightValue;
+        actorNode[0].paths[0].value = sensorNode[0].paths[2].value / 2;
+        actorNode[0].paths[1].value = sensorNode[0].paths[3].value / 2;
+        actorNode[0].paths[2].value = sensorNode[0].paths[4].value / 2;
+        actorNode[0].paths[3].value = sensorNode[0].paths[0].value;
 
-        //actorNode.lampValue = sensorNode.lightValue;
-        // frontendData.value.length = 0;
-        // frontendData.value.push(sensorNode.surfaceTemp);
-        //
-        // if (sensorNode.lightValue.red.toString() < 600) {
-        //     actorNode.lampValue.red = 255;
-        //     actorNode.lampValue.green = 255;
-        //     actorNode.lampValue.blue = 255;
-        // } else {
-        //     actorNode.lampValue.red = 0;
-        //     actorNode.lampValue.green = 0;
-        //     actorNode.lampValue.blue = 0;
-        // }
-
+        if (sensorNode[0].paths[0].value < 26){
+            actorNode[0].paths[4].value = 1;
+        }else{
+            actorNode[0].paths[4].value = 0;
+        }
 
         //PREPARE FOR FRONTEND
         let d = new Date();
@@ -461,6 +450,10 @@ function calculate() {
         frontendData[2].value.push(sensorNode[0].paths[4].value);
         frontendData[2].timestamp = timestamp;
 
+        //s3
+        frontendData[3].value.length = 0;
+        frontendData[3].value.push(sensorNode[0].paths[5].value);
+        frontendData[3].timestamp = timestamp;
 
         resolve();
     });
@@ -531,6 +524,16 @@ function updateFromSensors() {
 
             log.debug('COAP Response from ' + sensorNode[0].hostname + ' on path ' + sensorNode[0].paths[4].path + ' value: ' + JSON.stringify(sensorNode[0].paths[4].value) + ' message: ' + sensorNode[0].paths[4].message);
 
+             // return (1);
+             return coapRequest(sensorNode[0].hostname, sensorNode[0].paths[5].path, sensorNode[0].paths[5].typ);
+        })
+
+        .then(function (data) {
+            sensorNode[0].paths[5].value = data.value;
+            sensorNode[0].paths[5].message = data.message;
+
+            log.debug('COAP Response from ' + sensorNode[0].hostname + ' on path ' + sensorNode[0].paths[5].path + ' value: ' + JSON.stringify(sensorNode[0].paths[5].value) + ' message: ' + sensorNode[0].paths[5].message);
+
             return (1);
         })
 
@@ -565,19 +568,27 @@ function updateFromSensors() {
 
 function updateToActors() {
 
+
     var promise = coapRequest(actorNode[0].hostname, actorNode[0].paths[0].path, actorNode[0].paths[0].typ, actorNode[0].paths[0].value.toString())
 
-        .then(function (result) {
-            console.log(result);
-            return coapRequest(actorNode.hostname, actorNode.lampPaths.green, 'PUT', actorNode.lampValue.green.toString())
+        .then(function () {
+            return coapRequest(actorNode[0].hostname, actorNode[0].paths[1].path, actorNode[0].paths[1].typ, actorNode[0].paths[1].value.toString())
         })
 
         .then(function () {
-            return coapRequest(actorNode.hostname, actorNode.lampPaths.blue, 'PUT', actorNode.lampValue.blue.toString())
+            return coapRequest(actorNode[0].hostname, actorNode[0].paths[2].path, actorNode[0].paths[2].typ, actorNode[0].paths[2].value.toString())
         })
 
         .then(function () {
-            return coapRequest(actorNode.hostname, '/temp', 'PUT', sensorNode.surfaceTemp)
+            return coapRequest(actorNode[0].hostname, actorNode[0].paths[3].path, actorNode[0].paths[3].typ, actorNode[0].paths[3].value.toString())
+        })
+
+        .then(function () {
+            return coapRequest(actorNode[0].hostname, actorNode[0].paths[4].path, actorNode[0].paths[4].typ, actorNode[0].paths[4].value.toString())
+        })
+
+        .then(function () {
+            return promise;
         })
 
         .catch(function (error) {
@@ -586,44 +597,6 @@ function updateToActors() {
 
     log.debug("Actor Put succsessfull");
 
-
-    // var actorNode = [{
-    //     hostname: "fe80::7b79:4946:539e:75e%lowpan0",
-    //     paths: [{
-    //         path: "/led/red",
-    //         typ: "PUT",
-    //         value: "",
-    //         message: ""
-    //     }, {
-    //         path: "/led/green",
-    //         typ: "PUT",
-    //         value: "",
-    //         message: ""
-    //     }, {
-    //         path: "/led/blue",
-    //         typ: "PUT",
-    //         value: "",
-    //         message: ""
-    //     }, {
-    //         path: "/ledbar/temp",
-    //         typ: "PUT",
-    //         value: "",
-    //         message: ""
-    //     }, {
-    //         path: "/heatswitch",
-    //         typ: "PUT",
-    //         value: "",
-    //         message: ""
-    //     }],
-    //     //hostname: "ff02::1",
-    // }];
-
-
-    return new Promise(function (resolve, reject) {
-
-
-        resolve();
-    });
 
 }
 
@@ -637,7 +610,7 @@ function coapRequest(hostname, path, method, payload) {
 
     return new Promise(function (resolve, reject) {
 
-        log.debug('Initialize COAP Request');
+        //log.debug('Initialize COAP Request');
 
         var servicesRequest = coap.request({
             hostname: hostname,
@@ -670,11 +643,16 @@ function coapRequest(hostname, path, method, payload) {
 
                 let tmp = servicesResponse.payload.toString();
                 //log.debug("Sensor " + method + " on: " + hostname, path + " ----> " + tmp);
+                //console.log(servicesResponse.payload.toString());
                 resolve(JSON.parse(tmp));
+                //console.log(tmp);
+
+                //console.log(servicesResponse.rsinfo);
+                resolve(tmp);
             });
 
         } else {
-            reject(Error("Invalid Method"));
+            reject(Error("Invalid coapRequest Method"));
         }
 
         servicesRequest.end();
@@ -689,7 +667,10 @@ function coapRequest(hostname, path, method, payload) {
 function displayUpdate() {
 
     return new Promise(function (resolve, reject) {
-
+        log.info("Ambient Temperature: " + sensorNode[0].paths[0].value);
+        log.info("Surface Temperature: " + sensorNode[0].paths[1].value);
+        log.info("Light Red:           " + sensorNode[0].paths[2].value + " Green: " + sensorNode[0].paths[3].value + " Blue: " + sensorNode[0].paths[4].value);
+        log.info("PH Sensor:           " + sensorNode[0].paths[5].value);
 
         resolve();
 
