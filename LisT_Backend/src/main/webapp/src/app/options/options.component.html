@@ -12,17 +12,17 @@
 	<div>
 		<label>Temperature: </label> <input [(ngModel)]="actors.value"
 			placeholder="20" />
-		<form (submit)="tempSwitch()">Save</form>
+		<button (click)="tempSwitch()">Save</button>
 	</div>
 <br>
 <br>
 <br>
 <div>
 	<label>Light: </label>
-	<form (submit)="lightRed()">Red</form>
-	<button (submit)="lightBlue()">Blue</button>
-	<button (submit)="lightGreen()">Green</button>
-	<button (submit)="lightWhite()">White</button>
+	<button (click)="lightRed()">Red</button>
+	<button (click)="lightBlue()">Blue</button>
+	<button (click)="lightGreen()">Green</button>
+	<button (click)="lightWhite()">White</button>
 	<br>
 	<br>
 	<span>{{dateFormat}}</span>
