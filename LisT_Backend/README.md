@@ -1,4 +1,4 @@
-# LisT
+# LisT Backend and Frontend
 
 Living in a smart Tank is the smart solution for every aquarium owner!  
 Observe and regulate your aquarium. Light, temperature and even the pH-value.
@@ -18,18 +18,15 @@ Even further you'll be able to regulate your temperature and your light from all
 * monitored pH-value, that will alarm you, if it differs from the default range
 * online statistics to your values and the possibility to change the defaults
 
+## Setup the Backend
+
+* install MySQL (configuration please see application.properties)
+* install MQTT broker with 'sudo apt-get install mosquitto'
+* install Angular on your Backend by following the given order (https://github.com/smartuni/LisT/blob/master/LisT_Doku/Angular%20install%20Order.txt)
+
 ## Getting started
 
-* TO DO
+* Use './gradlew bootRun' via terminal, in the LisT/LisT_Mqtt_Listener folder
+* Use './gradlew bootRun' via terminal, in the LisT/LisT_Backend folder
+* The Website runs on Port 8080 at /index.html.
 
-## Setting up the hardware
-
-To use our system, you'll need the following hardware:
-
-* 1x Raspberry Pie
-* 1x light sensor (desc tba)
-* 1x pH-sensor (desc tba)
-* 1x temperature sensor (desc tba)
-* 1x heating element (desc tba)
-* 1x light elements (desc tba)
-* ...
