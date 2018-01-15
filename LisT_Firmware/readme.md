@@ -1,8 +1,6 @@
-Sensor configuration for RIOT-OS
+Sensor and actuator configuration for RIOT-OS
 =================================
 This directory contains sensor and actuator configuration.
-
-Build instructions for our IoT devices firmware will follow.
 
 ---
 
@@ -10,7 +8,8 @@ Build instructions for our IoT devices firmware will follow.
 
 Please clone the repository RIOT.
 
-`git clone https://github.com/RIOT-OS/RIOT.git`
+`https://github.com/Katritz/RIOT/tree/add_pH_sensor`
+The required pH-sensor driver can be found on this respository.
 
 At the same folder level clone our LisT repository.
 
