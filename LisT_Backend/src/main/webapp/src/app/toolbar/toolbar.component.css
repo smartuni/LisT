@@ -1,0 +1,23 @@
+nav a {
+	padding: 0.4em;
+	text-decoration: none;
+	font-weight: bold;
+	color: white;
+	background-color: blue;
+	text-align: center;
+	width: 30px;
+	height: 30px;s
+	text-align: center;
+	font-size: 25px;
+}
+
+nav a:hover {
+	color: white;
+	background-color: darkblue;
+	text-align: center;
+	width: 30px;
+	height: 30px;
+	line-height: 10px;
+	text-align: center;
+	font-size: 25px;
+}

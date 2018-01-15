@@ -1,34 +1,13 @@
 <!DOCTYPE html>
-<app-toolbar></app-toolbar>
-<router-outlet></router-outlet>
+
 
 <html lang="en">
 	<head>
-		<meta charset="UFT-8">
+		<meta charset="UTF-8">
 	</head>
 	<body>
-		<h1>
-		{{title}}
-		</h1>
-		<button (click)="printSensor()">Sensoren</button>
-		<button (click)="printValuesSensor1()">Temperatur 1</button>
-		<button (click)="printValuesSensor2()">Temperatur 2</button>
-		<button (click)="printValuesSensor3()">Lichtwert</button>
-		<button (click)="printValuesSensor4()">pH-Wert</button>
-		<br/>
-		<br/>
-		<br/>
-<ul class="sensors">
-  <li *ngFor="let sensor of allSensors">
-      <span class="badge">{{sensor.id}}</span> {{sensor.name}}
-  </li>
-</ul>
-
-<ul class="values">
-  <li *ngFor="let value of values">
-      <span class="badge">{{value.id}}</span> {{value.values}} {{value.timestamp}}
-  </li>
-</ul>
+	<app-toolbar></app-toolbar>
+		
 		
 	</body>
 </html>
