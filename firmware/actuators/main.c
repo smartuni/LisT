@@ -125,6 +125,7 @@ int main(void)
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 */    
 
+    xtimer_sleep(1);
     while(1){
 
         // set RGB values
