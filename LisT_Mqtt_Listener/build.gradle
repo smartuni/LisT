@@ -1,0 +1,46 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.7.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	    maven {
+        	url "https://repo.eclipse.org/content/repositories/paho-releases/"
+    	}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE')
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven {
+    	url "https://repo.eclipse.org/content/repositories/paho-releases/"
+	}
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile('org.json:json:20171018')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3')
+	compile('org.elasticsearch.client:elasticsearch-rest-client-sniffer:6.0.0')
+	compile('mysql:mysql-connector-java:6.0.6')
+	runtime('mysql:mysql-connector-java')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3' //version required
+}

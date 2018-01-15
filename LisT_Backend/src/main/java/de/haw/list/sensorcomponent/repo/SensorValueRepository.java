@@ -14,15 +14,26 @@ import de.haw.list.sensorcomponent.model.SensorValue;
 /**
  * Repository fuer Sensorwert.
  * 
- * @author Lydia Pflug 18.10.2017
+ * @author Lydia Pflug
+ * 18.10.2017
  */
 @Repository
 public interface SensorValueRepository extends JpaRepository<SensorValue, Integer> {
 
 	public List<SensorValue> findAllBySensor(Sensor sensor);
+	
+	public Optional<SensorValue> findById(int sensorId);
 
-	// TODO lyp 25.10.2017 Testen!!!
-	@Query(value = "SELECT * FROM SENSORVALUE WHERE SENSOR_ID =:sensorId AND (SELECT MAX(TIMESTAMP) FROM SENSORVALUE)", nativeQuery = true)
-	Optional<SensorValue> findLatestValueBySensor(@Param("sensorId") int sensorId);
+	@Query(value = "select * from sensorvalue where sensor_id = :id and timestamp = (Select max(timestamp) from sensorvalue)", nativeQuery = true)
+	Optional<SensorValue> findLatestValueBySensor(@Param("id") int sensorId);
+	
+	@Query(value = "select * from sensorvalue", nativeQuery = true)
+	List<SensorValue> findValueBySensor();
+	
+	@Query(value = "select * from sensorvalue where sensorvalue.sensor_id = :id", nativeQuery = true)
+	List<SensorValue> findValueBySensor(@Param("id") int sensorId);
+	
+	@Query(value = "select * from sensorvalue where timestamp = (select max(timestamp) from sensorvalue)", nativeQuery = true)
+	List<SensorValue> findValueByTimestamp();//@Param("ts") LocalDateTime ts);
 
 }

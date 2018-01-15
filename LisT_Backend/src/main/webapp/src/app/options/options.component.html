@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+</head>
+
+<body>
+<h1>Options</h1>	
+<br>
+	<div>
+		<label>Temperature: </label> <input [(ngModel)]="actors.value"
+			placeholder="20" />
+		<button (click)="tempSwitch()">Save</button>
+	</div>
+<br>
+<br>
+<br>
+<div>
+	<label>Light: </label>
+	<button (click)="lightRed()">Red</button>
+	<button (click)="lightBlue()">Blue</button>
+	<button (click)="lightGreen()">Green</button>
+	<button (click)="lightWhite()">White</button>
+	<br>
+	<br>
+	<span>{{dateFormat}}</span>
+</div>
+
+</body>

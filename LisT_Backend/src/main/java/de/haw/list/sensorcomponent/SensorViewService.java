@@ -38,7 +38,7 @@ public interface SensorViewService {
 	 * @throws SensorNotFoundException 
 	 * @throws NoValueAvailableException 
 	 */
-	public SensorValue getLastValueFromSensor(int sensorId) throws SensorNotFoundException, NoValueAvailableException;
+	public List<Double> getLatestValueFromSensor(int sensorId) throws SensorNotFoundException, NoValueAvailableException;
 	
 	/**
 	 * Gibt alle Werte des Sensors zurueck.

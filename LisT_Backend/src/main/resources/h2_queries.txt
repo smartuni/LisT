@@ -1,0 +1,4 @@
+select * from log;
+select * from sensor;
+select * from sensorvalue;
+select * from sensor_value_values;

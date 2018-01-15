@@ -13,6 +13,6 @@ import java.io.Serializable;
  */
 public enum SensorType implements Serializable {
 	
-	TEMPERATURE, LIGHT, PH;
+	TEMP, LIGHT, PH;
 
 }
