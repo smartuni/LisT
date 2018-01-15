@@ -1,9 +1,11 @@
-firmware/actuators
+LisT_Firmware/actuators
 ================
-This application 
+This firmware is used to flash our actuator nodes.
 
 Usage
 =====
+See the tutorial for RIOT to be able to flash our boards:
+* https://github.com/RIOT-OS/Tutorials#tutorials-for-riot
 
 Flash the main.c on a samrx21 Board.
 ```
@@ -33,11 +35,9 @@ make all flash term SERIAL=<serialnumber the previous cmd returned>
 * GND: EXT1 GND oder EXT2 GND
 * CLK: PA13
 * DI: PA28
-		
-* LED bar steps: 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255 (from 18 to 28 degree celsius)
 
 #### Heating element:
 
 -> SwitchBox with RS232 cable
-* GND: Ext1 GND oder EXT2 GND (red, Pin 8)
-* VCC: PA23 (purple, Pin 1)
+* GND: Ext1 GND oder EXT2 GND (Pin 8)
+* VCC: PA23 (Pin 1)

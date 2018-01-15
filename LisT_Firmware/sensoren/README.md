@@ -7,6 +7,8 @@ Usage
 See the tutorial for RIOT to be able to flash our boards:
 * https://github.com/RIOT-OS/Tutorials#tutorials-for-riot
 
+Flash the main.c on a Phytec phyNODE KW22 Board.
+
 Once you are all set up simply build and flash the application for your target board:
 
 ```
