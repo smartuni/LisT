@@ -1,19 +1,23 @@
-examples/saul
+LisT_Firmware/sensoren/
 ================
-This application demonstrates the usage of SAUL and the SAUL registry.
+This firmware is used to flash our sensor nodes.
 
 Usage
 =====
-Simply build and flash the application for your target board:
+See the tutorial for RIOT to be able to flash our boards:
+* https://github.com/RIOT-OS/Tutorials#tutorials-for-riot
+
+Once you are all set up simply build and flash the application for your target board:
+
 ```
-BOARD=YOUR_BOARD_NAME_HERE make flash term
+make all flash term
 ```
 
-Now you should have access to the RIOT shell on your board. For interacting
-with SAUL devices, use the `saul` shell command, e.g.:
+Should you have multiple boards connected to your machine use the following commands to ensure you are flashing the correct one:
+
 ```
-saul            <- this will list all available devices mapped into
-                   the SAUL registry
-saul read 0     <- read values from device #0
-saul write 1 0  <- write a `0` to SAUL device #1
+make list-ttys
+make all flash term SERIAL=<serialnumber the previous cmd returned>
 ```
+
+Now you should have access to the RIOT shell on your board. You will see minor debug information being printed.
