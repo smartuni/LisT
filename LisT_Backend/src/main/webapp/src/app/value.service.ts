@@ -16,7 +16,7 @@ export class ValueService {
   }
 
   getValue2(): Observable<any> {
-    return this.http.get(this.baseUrl + '/sensors/2}/values');
+    return this.http.get(this.baseUrl + '/sensors/2/values');
   }
 
   getValue3(): Observable<any> {

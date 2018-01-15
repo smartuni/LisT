@@ -38,27 +38,27 @@ export class OptionsComponent implements OnInit {
   ngOnInit() {
   }
 
-  private tempSwitch(): Observable<any> {
+  tempSwitch(): Observable<any> {
    return this.http.put(this.baseUrl + '/actor', this.data1, httpOptions);
   }
 
-  private tempLog(): void {
+  tempLog(): void {
     console.log(this.http.put(this.baseUrl + '/actor', this.dataTest, httpOptions));
   }
 
-  private lightRed():  void {
+  lightRed():  void {
     this.http.put(this.baseUrl + '/actor', this.red, httpOptions);
   }
 
-    private lightBlue():  Observable<any> {
+  lightBlue():  Observable<any> {
     return this.http.put(this.baseUrl + '/actor', this.blue, httpOptions);
   }
 
-    private lightGreen():  Observable<any> {
+  lightGreen():  Observable<any> {
     return this.http.put(this.baseUrl + '/actor', this.green, httpOptions);
   }
 
-    private lightWhite():  Observable<any> {
+  lightWhite():  Observable<any> {
     return this.http.put(this.baseUrl + '/actor', this.white, httpOptions);
   }
 
