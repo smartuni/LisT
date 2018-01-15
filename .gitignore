@@ -59,15 +59,13 @@ nbdist/
 .nb-gradle/
 
 #Basti custom settings:
-firmware/coap/.kdev4/
-firmware/coap/bin/
+LisT_Firmware/coap/.kdev4/
+LisT_Firmware/coap/bin/
 *.kdev4
 
-firmware/actuators/bin/
-
-firmware/RIOT/\.vagrant/machines/default/virtualbox/
+LisT_Firmware/RIOT/\.vagrant/machines/default/virtualbox/
 LisT_Firmware/sensoren/bin
-firmware/sensoren/bin/
-firmware/actuators/bin/
-firmware/rgb_minimal/bin/
-Treiber/test/bin/
+LisT_Firmware/sensoren/bin/
+LisT_Firmware/actuators/bin/
+
+
